@@ -114,7 +114,6 @@ odoo.define('pos_rksv.rksv', function (require) {
                         self.pos.signatures.set(signatures);
                     }
                     // Here do check for the start receipt flag - if it is set - then generate the start receipt for this cash register !
-                    
                     if ((self.start_receipt_in_progress === false) &&
                         (self.all_ok()) &&
                         (status.newValue.drivers.rksv) &&
@@ -131,19 +130,19 @@ odoo.define('pos_rksv.rksv', function (require) {
                         (status.newValue.drivers.rksv.has_valid_start_receipt === false)) {
                         self.start_receipt_in_progress = true;
                         self.bmf_register_start_receipt_rpc().then(
-                            function done(response) {
-                                if (response.success == false) {
-                                    self.start_receipt_in_progress = false;
-                                    self.pos.set('cashbox_mode', 'inactive');
-                                    console.log(response.message);
-                                } else {
-                                    self.start_receipt_in_progress = false;
-                                    console.log("Startbeleg wurde erfolgreich eingereicht!");
-                                }
+                            function done() {
+                                self.start_receipt_in_progress = false;
+                                console.log("Startbeleg wurde erfolgreich eingereicht!");
                             },
                             function failed(message) {
                                 self.start_receipt_in_progress = false;
-                                console.log(message);
+                                // Set setup state
+                                self.pos.set('cashbox_mode', 'setup');
+                                // Display error popup for user
+                                self.pos.gui.show_popup('error',{
+                                    'title': _t("Fehler"),
+                                    'body': message
+                                });
                             }
                         )
                     }
@@ -252,8 +251,8 @@ odoo.define('pos_rksv.rksv', function (require) {
             var self = this;
             if (!self.check_proxy_connection()) {
                 self.pos.gui.show_popup('error',{
-                    'message': _t("Fehler"),
-                    'comment': "PosBox Verbindung wird für diese Funktion benötigt !"
+                    'title': _t("Fehler"),
+                    'body': "PosBox Verbindung wird für diese Funktion benötigt !"
                 });
                 return;
             }
@@ -266,8 +265,8 @@ odoo.define('pos_rksv.rksv', function (require) {
                 function done(response) {
                     if (response.success == false) {
                         self.pos.gui.show_popup('error',{
-                            'message': _t("Fehler"),
-                            'comment': response.message
+                            'title': _t("Fehler"),
+                            'body': response.message
                         });
                     } else {
                         // in response we should have the needed data to reprint - we assume to have a pos printer here
@@ -280,8 +279,8 @@ odoo.define('pos_rksv.rksv', function (require) {
                 },
                 function failed() {
                     self.pos.gui.show_popup('error',{
-                        'message': _t("Fehler"),
-                        'comment': "Fehler bei der Kommunikation mit der PosBox!"
+                        'title': _t("Fehler"),
+                        'body': "Fehler bei der Kommunikation mit der PosBox!"
                     });
                 }
             );
@@ -416,8 +415,8 @@ odoo.define('pos_rksv.rksv', function (require) {
                         function done(result) {
                             if (!result['success']) {
                                 self.pos.gui.show_popup('error',{
-                                    'message': _t("RKSV Fehler"),
-                                    'comment': result['message']
+                                    'title': _t("RKSV Fehler"),
+                                    'body': result['message']
                                 });
                                 deferred.reject(result['message']);
                             } else {
@@ -438,8 +437,8 @@ odoo.define('pos_rksv.rksv', function (require) {
                 function failed(message) {
                     self.inform_running = false;
                     self.pos.gui.show_popup('error',{
-                        'message': _t("RKSV Fehler"),
-                        'comment':  message
+                        'title': _t("RKSV Fehler"),
+                        'body':  message
                     });
                     deferred.reject(message);
                 }

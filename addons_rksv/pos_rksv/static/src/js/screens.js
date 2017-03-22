@@ -31,7 +31,6 @@ odoo.define('pos_rksv.screens', function (require) {
     var screens = require('point_of_sale.screens');
     var core = require('web.core');
     var QWeb = core.qweb;
-    var Model = require('web.DataModel');
     var gui = require('point_of_sale.gui');
     var _t = core._t;
 
@@ -40,7 +39,7 @@ odoo.define('pos_rksv.screens', function (require) {
         validate_order: function(force_validation) {
             var self = this;
             var order = this.pos.get_order();
-            
+
             // Copied from finalize_validation
             // FIXME: this check is there because the backend is unable to
             // process empty orders. This is not the right place to fix it.
@@ -518,8 +517,8 @@ odoo.define('pos_rksv.screens', function (require) {
                     );
                 } else {
                     self.pos.gui.show_popup('error',{
-                        'message': _t("Passwort falsch"),
-                        'comment': _t("Das richtige POS Admin Passwort wird benötigt.")
+                        'title': _t("Passwort falsch"),
+                        'body': _t("Das richtige POS Admin Passwort wird benötigt.")
                     });
                 }
             });
