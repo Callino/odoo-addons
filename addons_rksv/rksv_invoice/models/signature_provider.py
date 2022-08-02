@@ -50,6 +50,7 @@ class SignatureProvider(models.Model):
                     'bmf_last_status': result['status']['status'],
                     'bmf_last_update': datetime.strptime(result['status']['ts_status'], DEFAULT_SERVER_DATETIME_FORMAT),
                 })
+            _logger.info("Got Result: %s", result)
 
     def register_signatureinheit(self):
         for signature in self:
