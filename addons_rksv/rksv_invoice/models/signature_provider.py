@@ -42,6 +42,24 @@ class SignatureProvider(models.Model):
             box = signature.box_id
             params = signature._get_signature_params()
             result = box.query_box("/hw_proxy/status_signatureinheit", params)
+            _logger.info("Got Result on status: %s", result)
+            if result['success']:
+                signature.update({
+                    'bmf_message': result['message'],
+                    'bmf_last_status': result['status']['status'],
+                    'bmf_last_update': result['status']['ts_status'],
+                })
+            _logger.info("Got Result: %s", result)
+
+    def register_signatureinheit(self):
+        for signature in self:
+            box = signature.box_id
+            params = signature._get_signature_params()
+            params.update({
+                'kundeninfo': signature.name,
+            })
+            result = box.query_box("/hw_proxy/rksv_signatureinheit_registrieren", params)
+            _logger.info("Got Result on register: %s", result)
             if result['success']:
                 signature.update({
                     'bmf_message': result['status']['status'],
