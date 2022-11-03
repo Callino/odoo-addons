@@ -5,6 +5,7 @@ from datetime import datetime
 import time
 from odoo.tools import DEFAULT_SERVER_DATETIME_FORMAT
 import re
+from requests.exceptions import ConnectTimeout
 import logging
 
 _logger = logging.getLogger(__name__)
@@ -51,16 +52,20 @@ class RKSVBox(models.Model):
     def query_box(self, path, params={}):
         self.ensure_one()
         postData = self._getBasePostData(params=params)
-        response = requests.post('%s%s' % (self.host, path, ),
-                                 json=postData,
-                                 timeout=self.timeout,
-                                 verify=False
-                                 )
-        if response.status_code == 200:
-            _logger.info("Got Response: %s", response.json())
-            return response.json()['result']
-        else:
-            raise UserError(response.text)
+        try:
+            response = requests.post('%s%s' % (self.host, path, ),
+                                     json=postData,
+                                     timeout=self.timeout,
+                                     verify=False
+                                     )
+            if response.status_code == 200:
+                return response.json()['result']
+            else:
+                raise UserError(response.text)
+        except ConnectTimeout:
+            raise UserError('Die RKSV Blackbox ist nicht erreichbar. Signatur kann nicht erstellt werden.')
+        except:
+            raise UserError('Es tratt ein Fehler bei der Kommunikation mit der RKSV Blackbox auf. Signatur kann nicht erstellt werden.')
 
     def button_query_box(self):
         '''
@@ -111,6 +116,7 @@ class RKSVBox(models.Model):
                         'x509': provider['x509'],
                         'company_id': company.id if company else None,
                         'box_id': box.id,
+                        'state': 'ready',
                     }
                     if not sprovider:
                         sprovider = self.env['signature.provider'].create(sproviderData)
@@ -121,6 +127,7 @@ class RKSVBox(models.Model):
                     'state': 'ready',
                     'last_error': '',
                 })
+                box.state = 'ready'
             except Exception as e:
                 box.write({
                     'state': 'error',
