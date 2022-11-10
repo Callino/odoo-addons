@@ -24,6 +24,7 @@
                     </div>
                 </xpath>
                 <xpath expr="//div[@groups='base.group_system']" position="before">
+                    <field name="iface_rksv" invisible="1"/>
                     <group string="Registrierkassenverordnung (Österreich)" attrs="{'invisible': [('iface_rksv', '=', False)]}">
                         <group>
                             <field name="cashregisterid"/>
