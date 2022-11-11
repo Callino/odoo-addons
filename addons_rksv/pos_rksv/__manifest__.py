@@ -27,7 +27,6 @@ Registrierkassen Modul für die Anforderungen der Österreichischen Registrierka
         'views/pos_config.xml',
         'views/pos_order.xml',
         'views/product.xml',
-        'data/data.xml'
     ],
     'assets': {
         'point_of_sale.assets': [
