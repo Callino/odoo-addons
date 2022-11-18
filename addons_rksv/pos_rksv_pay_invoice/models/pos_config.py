@@ -16,5 +16,5 @@ class PosConfig(models.Model):
             ('rksv_tax_mapping_correct', '=', True),
             ('rksv_product_type', '=', 'nullreceipt')
         ],
-        required=True
+        required=False
     )
