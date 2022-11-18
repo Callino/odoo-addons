@@ -7,7 +7,7 @@
             <field name="inherit_id" ref="point_of_sale.pos_config_view_form"/>
             <field name="arch" type="xml">
                 <xpath expr="//form//sheet" position="before">
-                    <header>
+                    <header attrs="{'invisible': ['|',('rksv_at','=',False),('iface_rksv', '=', False)]}">
                         <button string="Failure" name="set_failure" type="object" states="active,inactive" />
                         <button string="ID erzeugen" name="create_cashregisterid" type="object" attrs="{'invisible': [('cashregisterid', '>', '')]}"/>
                         <button string="Set to Active" name="set_active" type="object" states="inactive,deprecated,setup,failure"/>
@@ -16,36 +16,48 @@
                         <field name="state" widget="statusbar" statusbar_visible="setup,active,inactive,deprecated,failure" statusbar_colors='{"failure" : "red"}' nolabel="1"/>
                     </header>
                 </xpath>
-                <xpath expr="//div[hasclass('pos_iot_config')]" position="inside">
-                    <field name="rksv_at" invisible="True"/>
-                    <div class="row">
-                        <label string="RKSV" for="iface_rksv" class="col-lg-4 o_light_label"/>
-                        <field name="iface_rksv" attrs="{'readonly': [('rksv_at', '=', True), ('iface_rksv', '=', True)], 'invisible': [('rksv_at', '=', False), ('iface_rksv', '=', False)]}"/>
+                <xpath expr="//div[@id='receipt']" position="after">
+                    <h2 attrs="{'invisible': [('rksv_at','=',False)]}">Registrierkassenverordnung Österreich</h2>
+                    <div class="row mt16 o_settings_container" id="rksv" attrs="{'invisible': ['&amp;',('rksv_at','=',False),('iface_rksv', '=', False)]}">
+                        <div class="col-12 col-lg-6 o_setting_box">
+                            <field name="rksv_at" invisible="1"/>
+                            <div class="o_setting_left_pane">
+                                <field name="iface_rksv" attrs="{'invisible': ['&amp;',('rksv_at','=',False),('iface_rksv', '=', False)]}"/>
+                            </div>
+                            <div class="o_setting_right_pane">
+                                <label for="iface_rksv"/>
+                                <div class="text-muted">
+                                    Registrierkassenverordnung für Österreich
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 o_setting_box">
+                            <div class="o_setting_left_pane"></div>
+                            <div class="o_setting_right_pane">
+                                <group string="Registrierkassenverordnung (Österreich)" attrs="{'invisible': [('iface_rksv', '=', False)]}">
+                                    <group>
+                                        <field name="cashregisterid"/>
+                                        <field name="signature_provider_id"/>
+                                    </group>
+                                    <group>
+                                        <field name="bmf_test_mode"/>
+                                        <field name="pos_admin_passwd" password="True" groups="base.group_system"  attrs="{'required': [('iface_rksv', '=', True)]}"/>
+                                     </group>
+                                </group>
+                                <group string="RKSV Produktkonfiguration" attrs="{'invisible': [('iface_rksv', '=', False)]}" groups="base.group_system" >
+                                    <group>
+                                        <field name="start_product_id" attrs="{'required': [('iface_rksv', '=', True)]}"/>
+                                        <field name="year_product_id"  attrs="{'required': [('iface_rksv', '=', True)]}"/>
+                                        <field name="month_product_id"  attrs="{'required': [('iface_rksv', '=', True)]}"/>
+                                    </group>
+                                    <group>
+                                        <field name="null_product_id"  attrs="{'required': [('iface_rksv', '=', True)]}"/>
+                                        <field name="invoice_product_id"  attrs="{'required': [('iface_rksv', '=', True)]}"/>
+                                    </group>
+                                </group>
+                            </div>
+                        </div>
                     </div>
-                </xpath>
-                <xpath expr="//div[@groups='base.group_system']" position="before">
-                    <field name="iface_rksv" invisible="1"/>
-                    <group string="Registrierkassenverordnung (Österreich)" attrs="{'invisible': [('iface_rksv', '=', False)]}">
-                        <group>
-                            <field name="cashregisterid"/>
-                            <field name="signature_provider_id"/>
-                        </group>
-                        <group>
-                            <field name="bmf_test_mode"/>
-                            <field name="pos_admin_passwd" password="True" groups="base.group_system"  attrs="{'required': [('iface_rksv', '=', True)]}"/>
-                         </group>
-                    </group>
-                    <group string="RKSV Produktkonfiguration" attrs="{'invisible': [('iface_rksv', '=', False)]}" groups="base.group_system" >
-                        <group>
-                            <field name="start_product_id" attrs="{'required': [('iface_rksv', '=', True)]}"/>
-                            <field name="year_product_id"  attrs="{'required': [('iface_rksv', '=', True)]}"/>
-                            <field name="month_product_id"  attrs="{'required': [('iface_rksv', '=', True)]}"/>
-                        </group>
-                        <group>
-                            <field name="null_product_id"  attrs="{'required': [('iface_rksv', '=', True)]}"/>
-                            <field name="invoice_product_id"  attrs="{'required': [('iface_rksv', '=', True)]}"/>
-                        </group>
-                    </group>
                 </xpath>
             </field>
         </record>

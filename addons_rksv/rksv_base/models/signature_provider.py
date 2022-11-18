@@ -29,7 +29,6 @@ class SignatureProvider(models.Model):
         string="Status",
         readonly=True,
         default='UNBEKANNT',
-        track_visibility='onchange',
         copy=False
     )
     bmf_last_update = fields.Datetime(
@@ -37,6 +36,5 @@ class SignatureProvider(models.Model):
         copy=False)
     bmf_message = fields.Char(
         string="BMF Status Text",
-        track_visibility='onchange',
         copy=False
     )
