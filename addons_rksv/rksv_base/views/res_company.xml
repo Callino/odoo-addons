@@ -12,9 +12,15 @@
                         <group>
                             <field name="rksv_at"/>
                         </group>
-                        <group string="Finanzonline (Unternehmen)">
-                            <field name="bmf_tid"/>
+                        <group>
+                            <group string="Finanzonline (Unternehmen)">
+                                <field name="bmf_tid"/>
+                            </group>
+                            <div>
+                                <button name="fon_check" type="object" string="FON Check"/>
+                            </div>
                         </group>
+
                         <group string="Finanzonline (RKSV Anmeldedaten)">
                             <field name="bmf_benid"/>
                             <field name="bmf_pin"/>

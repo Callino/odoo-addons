@@ -16,7 +16,7 @@
                         <field name="state" widget="statusbar" statusbar_visible="setup,active,inactive,deprecated,failure" statusbar_colors='{"failure" : "red"}' nolabel="1"/>
                     </header>
                 </xpath>
-                <xpath expr="//div[@id='receipt']" position="after">
+                <xpath expr="//div[@groups='base.group_system']" position="before">
                     <h2 attrs="{'invisible': [('rksv_at','=',False)]}">Registrierkassenverordnung Österreich</h2>
                     <div class="row mt16 o_settings_container" id="rksv" attrs="{'invisible': ['&amp;',('rksv_at','=',False),('iface_rksv', '=', False)]}">
                         <div class="col-12 col-lg-6 o_setting_box">
