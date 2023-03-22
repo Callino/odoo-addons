@@ -38,6 +38,9 @@ odoo.define('pos_six.pos', function (require) {
             var line = this.$('.paymentlines-container');
             // Register gui hooks
             var self  = this;
+            if (this.pos.reloaded_order) {
+                return;
+            }
             // Bind on the new terminal payment button
             // Do unbind first
             line.off('click');
@@ -338,6 +341,9 @@ odoo.define('pos_six.pos', function (require) {
             var self = this;
             var order = this.pos.get_order();
             var line = order.paymentlines._byId[line_cid];
+            if (!line) {
+                return;
+            }
             var data = {};
             if (line.is_return_line==true) {
                 if (!ref) {
