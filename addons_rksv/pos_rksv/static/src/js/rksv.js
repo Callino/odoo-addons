@@ -117,15 +117,22 @@ odoo.define('pos_rksv.rksv', function (require) {
                         pos: self.pos
                     });
                     signatures.push(newSignature);
-                    self.pos.env.posbus.trigger('create-new-signature', {
-                        'signature': serial,
-                        'signatures': signatures
+                    // Only trigger this if it is really a new signature
+                    var signatureFound = false;
+                    $.each(self.pos.signatures, function(index, signature) {
+                        if (signature.serial == serial) {
+                            signatureFound = true;
+                        }
                     });
-                    self.pos.env.posbus.trigger('render-sproviders');
-                    self.pos.env.posbus.trigger('signature-change', {
-                        'signature': serial,
-                        'signatures': signatures
-                    });
+                    if (!signatureFound) {
+                        // This will trigger a write back to the backend
+                        self.pos.env.posbus.trigger('create-new-signature', {
+                            'signature': serial,
+                            'signatures': signatures
+                        });
+                        // This will trigger a render of the signature provider view
+                        self.pos.env.posbus.trigger('render-sproviders');
+                    }
                     // Check if this is an active signature - forward status if it is
                     if ((currentSignature) && (currentSignature.get('serial') == newSignature.get('serial'))) {
                         currentSignature.set({

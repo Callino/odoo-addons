@@ -15,7 +15,8 @@ odoo.define('pos_rksv.RKSVStatusScreen', function(require) {
             super.setup();
             var self = this;
             useBus(this.env.posbus, 'set-signature', this.__setSignature);
-            useListener('create-new-signature', this.se_status_handler);
+            //useBus(this.env.posbus, 'create-new-signature', this.se_status_handler);
+            useBus(this.env.posbus, 'render-sproviders', this.render_sproviders);
             this.sproviders = null;
             this.stay_open = false;
             this.active = true;
@@ -256,7 +257,6 @@ odoo.define('pos_rksv.RKSVStatusScreen', function(require) {
                 return;
             }
             // Listen on status update for signaturs - display the change here
-            useBus(self.env.posbus, 'create-new-signature', this.render_sproviders);
             useBus(self.env.posbus, 'render-sproviders', this.render_sproviders);
         }
         rk_status_handler() {
