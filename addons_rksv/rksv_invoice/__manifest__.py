@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Bar-Zahlungen RKSV Signatur',
-    'version': '15.0.1.0',
+    'version': '16.0.1.0',
     'category': 'Point of Sale',
     'sequence': 6,
     'summary': 'Bar-Zahlungen RKSV Signatur',

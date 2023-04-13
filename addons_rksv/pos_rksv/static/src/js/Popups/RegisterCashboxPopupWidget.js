@@ -42,7 +42,7 @@ odoo.define('pos_rksv.RegisterCashboxPopupWidget', function (require) {
                         pos.rksv.update_bmf_rk_status();
                     } else {
                         self.state.success = response.message;
-                        self.env.provy.set('cashbox_mode', 'active');
+                        self.env.proxy.set('cashbox_mode', 'active');
                         // Request a status update here
                         pos.rksv.update_bmf_rk_status();
                     }
