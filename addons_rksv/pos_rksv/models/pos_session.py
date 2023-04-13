@@ -11,14 +11,31 @@ class POSSession(models.Model):
     _name = 'pos.session'
     _inherit = 'pos.session'
 
+    def _loader_params_res_partner(self):
+        return {
+            'search_params': {
+                'domain': [('id', '<', 500)],
+                'fields': [
+                    'name', 'street', 'city', 'state_id', 'country_id', 'vat', 'lang', 'phone', 'zip', 'mobile', 'email',
+                    'barcode', 'write_date', 'property_account_position_id', 'property_product_pricelist', 'parent_name'
+                ],
+            },
+        }
+
     def _loader_params_res_company(self):
         params = super(POSSession, self)._loader_params_res_company()
         params['search_params']['fields'].extend(["bmf_tid", "bmf_benid", "bmf_pin", "bmf_hersteller_atu", "bmf_tax_number", "bmf_vat_number"])
         return params
 
+    def _loader_params_account_tax(self):
+        params = super(POSSession, self)._loader_params_account_tax()
+        params['search_params']['fields'].extend(["rksv_tax", "rksv_tax_category"])
+        return params
+
     def _loader_params_product_product(self):
         params = super(POSSession, self)._loader_params_product_product()
         params['search_params']['domain'] = AND([params['search_params']['domain'], [('rksv_tax_mapping_correct', '=', True)]])
+        params['search_params']['fields'].extend(["tracking"])
         return params
 
     def _pos_ui_models_to_load(self):

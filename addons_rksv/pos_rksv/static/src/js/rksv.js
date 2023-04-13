@@ -52,7 +52,7 @@ odoo.define('pos_rksv.rksv', function (require) {
             }
             // Bind on RK BMF Status change
             useBus(this.pos.env.posbus, 'change:bmf_status_rk', function(pos, status) {
-                if (status.success) {
+                if (status && status.success) {
                     self.statuses.kasse = true;
                 } else {
                     self.statuses.kasse = false;
@@ -194,44 +194,46 @@ odoo.define('pos_rksv.rksv', function (require) {
                     self.create_month_receipt(statusWidget);
                 }
             }
-            /*if (self.pos.rksv.check_proxy_connection()){
+            if (self.pos.rksv.check_proxy_connection()){
                 self.pos.rksv.bmf_status_rpc_call().then(
                     function done(response) {
                         self.pos.env.proxy.set('bmf_status_rk', response);
                         if (response.success === false) {
-                            self.env.proxy.set('bmf_status_rk', {
+                            self.pos.env.proxy.set('bmf_status_rk', {
                                 'success': false,
                                 'message': "Fehler bei der Kommunikation mit der PosBox!"
                             });
                         } else {
-                            self.env.proxy.set('bmf_status_rk', {
+                            self.pos.env.proxy.set('bmf_status_rk', {
                                 'success': false,
                                 'message': "Fehler bei der Kommunikation mit der PosBox!"
                             });
                         }
                     },
                     function failed() {
-                        self.env.proxy.set('bmf_status_rk', {
+                        self.pos.env.proxy.set('bmf_status_rk', {
                             'success': false,
                             'message': "Fehler bei der Kommunikation mit der PosBox!"
                         });
                     }
                 );
             } else {
-                self.env.proxy.set('bmf_status_rk', {
+                self.pos.env.proxy.set('bmf_status_rk', {
                     'success': false,
                     'message': "Fehler bei der Kommunikation mit der PosBox (Proxy nicht initialisiert)!"
                 });
             }
-            this.pos.env.posbus.trigger('change:bmf_status_rk', {status: self.pos.env.proxy.get("bmf_status_rk")});*/
+            this.pos.env.posbus.trigger('change:bmf_status_rk', {status: self.pos.env.proxy.get("bmf_status_rk")});
             var config_signature = null;
             $(self.pos.signatures).each(function(id, sprov) {
-                if (sprov.cin == self.pos.config.signature_provider_id[1]) {
+                if ((sprov.cin == self.pos.config.signature_provider_id[1]) || (sprov.public_key == self.pos.config.signature_provider_id[1])) {
                     config_signature = sprov;
                 }
             });
-            this.pos.rksv.signature = config_signature;
-            this.pos.env.posbus.trigger('change:signature', {signature: config_signature});
+            if (config_signature) {
+                this.pos.rksv.signature = config_signature;
+                this.pos.env.posbus.trigger('change:signature', {signature: config_signature});
+            }
             // self.pos.env.proxy.trigger("change:status")
             self.update_bmf_rk_status();
         }
@@ -265,7 +267,7 @@ odoo.define('pos_rksv.rksv', function (require) {
             var params = Object.assign(this.get_default_params(), add_params);
             console.log('RPC Call URL: ', url);
             console.log('RPC Call Params: ', params);
-            return this.pos.env.proxy.connection.rpc(url, params);
+            return this.pos.env.proxy.connection.rpc(url, params, {shadow: true, timeout: 2500});
         }
         get_default_params(){
             return {
@@ -424,11 +426,13 @@ odoo.define('pos_rksv.rksv', function (require) {
         inform_proxy(signature) {
             var self = this;
             this.signature = signature;
+            // this.proxy_informed = false;
             console.log('As soon as possible we have to inform the proxy about the signature');
             this.pos.env.proxy.on('change:status', this, function (eh, status) {
                 if ((status.newValue.status == 'connected') && (!self.proxy_informed) && (!self.inform_running) && (self.signature)) {
                     self.inform_running = true;
                     self.set_signature(self.signature);
+                    //self.pos.env.posbus.trigger('change:signature', {signature: self.signature});
                 }
             });
         }
@@ -445,7 +449,7 @@ odoo.define('pos_rksv.rksv', function (require) {
                     self.proxy_rpc_call(
                         '/hw_proxy/delete_start_receipt',
                         Object.assign(self.get_rksv_info()),
-                        self.timeout
+                        {shadow: true, timeout: self.timeout}
                     ).then(
                         function done(response) {
                             if (response.success == false) {

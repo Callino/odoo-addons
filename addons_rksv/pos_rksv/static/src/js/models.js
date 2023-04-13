@@ -190,10 +190,11 @@ odoo.define('pos_rksv.models', function (require) {
                         signature = sprov;
                     }
                 });
-                if (signature)
+                if (signature && status)
                     signature.bmf_status = status['bmf_status'];
                     signature.bmf_message = status['bmf_message'];
                     signature.bmf_last_status = status['bmf_last_status'];
+                    posmodel.env.posbus.trigger('change:bmf_status', {signature: signature});
             }
         }
         setStatus(status) {
@@ -224,7 +225,7 @@ odoo.define('pos_rksv.models', function (require) {
             });
             var config_signature = null; // pos.config.signature_provider_id
             $(pos.signatures).each(function(id, sprov) {
-                if (sprov.cin == pos.config.signature_provider_id[1]) {
+                if ((sprov.cin == pos.config.signature_provider_id[1]) || (sprov.public_key == pos.config.signature_provider_id[1])) {
                     config_signature = sprov;
                 }
             });
@@ -271,23 +272,21 @@ odoo.define('pos_rksv.models', function (require) {
         async _processData(loadedData) {
             await super._processData(...arguments);
             this._loadSignatures(loadedData['signature.provider']);
-            this.signatures = loadedData['signature.provider'];
+            this.env.proxy.iot_boxes = loadedData['iot.box'];
         }
         _loadSignatures(signatures) {
-        for (let signature of signatures) {
-            if (!this.signatures.includes(signature.serial)) {
-                this.signatures.push(signature.serial);
-            }
+            const modelSignatures = signatures.map(signature => {
+                this.signatures.push(Signature.create(signature));
+            });
         }
-    }
     }
 
     /*
     Define Signature Collection - does hold all available signature providers
      - in global models namespace
      */
-    /* class Signatures extends PosCollection{
-        model: models.Signature,
+    /*class Signatures extends PosCollection{
+        model: Signature,
         getActiveSignature: function(pos) {
             var config_signature = pos.get('signature');
             return this.get(config_signature.get('serial'));

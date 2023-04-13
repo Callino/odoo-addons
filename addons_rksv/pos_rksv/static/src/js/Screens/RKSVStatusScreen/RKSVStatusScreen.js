@@ -294,6 +294,14 @@ odoo.define('pos_rksv.RKSVStatusScreen', function(require) {
         posbox_status_handler () {
             var self = this;
             this.env.proxy.on('change:status', this, function (eh, status) {
+                if (!self.active) {
+                    // inactive do nothing
+                    return
+                }
+                self.state.configuration_color = (this.env.pos.rksv.statuses['rksv_products_exists']?'green':'red');
+                if (self.env.pos.rksv.signature) {
+                    self.env.pos.rksv.signature.try_refresh_status()
+                }
                 // Do update the datetime and status here
                 if (status.newValue.drivers.rksv && status.newValue.drivers.rksv.posbox_vienna_datetime) {
                     self.state.rksv_posbox_datetime = status.newValue.drivers.rksv.posbox_vienna_datetime;
@@ -365,7 +373,7 @@ odoo.define('pos_rksv.RKSVStatusScreen', function(require) {
                     }
                     if (status.newValue.drivers.rksv && status.newValue.drivers.rksv.messages){
                         var container = $('<div />');
-                        container.append(rksvmessage + ' (' + rksvstatus + ')');
+                        container.append('<span>' + rksvmessage + ' (' + rksvstatus + ')</span>');
                         var messages = $('<ul style="font-size: 0.7em;margin: 10px 0;line-height: 1.5em;" />');
                         status.newValue.drivers.rksv.messages.forEach(function(message) {
                             messages.append('<li>' + message + '</li>');
@@ -374,6 +382,7 @@ odoo.define('pos_rksv.RKSVStatusScreen', function(require) {
                         messages.append('<li>Aktueller Kassenmodus: ' + status.newValue.drivers.rksv.cashbox_mode + '</li>');
                         container.append(messages);
                         rksvmessage = container.html();
+                        $('.rksv_status_message').html(container.html());
                     }
                     self.state.rksv_status_message = rksvmessage;
 

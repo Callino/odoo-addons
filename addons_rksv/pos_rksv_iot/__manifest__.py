@@ -27,7 +27,7 @@ Erweiterung für den gebrauch mit pos_iot
     ],
     'assets': {
         'point_of_sale.assets': [
-            'pos_rksv_iot/static/src/js/models.js',
+            # 'pos_rksv_iot/static/src/js/models.js',
             'pos_rksv_iot/static/src/js/devices.js',
         ],
         'point_of_sale.pos_assets_backend_style': [

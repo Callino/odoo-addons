@@ -19,7 +19,8 @@ odoo.define('pos_rksv.RKSVSignatureProvider', function(require) {
                 signature: this.props.signature,
                 serial: this.props.signature.serial,
             });
-            useListener('change:bmf_status change:bmf_message change:bmf_last_status', function(signature) {
+            useBus(this.env.posbus, 'change:bmf_status', this.bus_set_signature_state);
+            useListener('change:bmf_status', function(signature) {
                 self.set_signature_state(signature);
             });
             onMounted(() => {
@@ -35,6 +36,9 @@ odoo.define('pos_rksv.RKSVSignatureProvider', function(require) {
                     signature.try_refresh_status(this.env.pos);
                 }
             });
+        }
+        bus_set_signature_state(ev) {
+            this.set_signature_state(ev.detail.signature);
         }
         set_signature_state(signature) {
             var self = this;
@@ -56,6 +60,7 @@ odoo.define('pos_rksv.RKSVSignatureProvider', function(require) {
             }
             self.state.message = message;
             self.state.color = color;
+            signature.color = color;
         }
         get valid_vat() {
             var sig = this.props.signature;

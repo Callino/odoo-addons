@@ -16,23 +16,23 @@ odoo.define('pos_rksv.devices', function (require) {
                 return self._super();
             }
 
-            function status() {
+            function status(){
+                var always = function () {
+                    setTimeout(status, 10000);
+                };
                 self.connection.rpc('/hw_proxy/status_json_rksv', {
                     'rksv': {
                         'kassenidentifikationsnummer': self.pos.config.cashregisterid
                     }
-                }, {timeout: 2500})
+                }, {shadow: true, timeout: 5000})
                     .then(function (driver_status) {
-                        self.set_connection_status('connected', driver_status);
+                        self.set_connection_status('connected',driver_status);
                     }, function () {
-                        if (self.get('status').status !== 'connecting') {
+                        if(self.get('status').status !== 'connecting'){
                             self.set_connection_status('disconnected');
                         }
-                    }).then(function () {
-                        setTimeout(status, 5000);
-                    });
+                    }).then(always, always);
             }
-
             if (!this.keptalive) {
                 this.keptalive = true;
                 status();

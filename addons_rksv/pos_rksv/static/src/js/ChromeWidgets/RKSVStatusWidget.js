@@ -9,20 +9,26 @@ odoo.define('pos_rksv.RKSVStatusWidget', function(require) {
     class RKSVStatusWidget extends PosComponent {
         constructor() {
             super(...arguments);
+            var self = this;
             // Possible status values
             this.status = ['connected','connecting','disconnected','warning','failure','setup','inactive'];
             this.state = useState({
                 status: 'setup',
                 msg: '',
             });
-            onMounted(() => {
+            this.env.proxy.on('change:status', this, this._onChangeStatus);
+            this.scheduled_update = false;
+            setInterval(() => {
+                self.scheduled_update = true;
+            }, 5000);
+            /*onMounted(() => {
                 if (!this.env.pos.config.iface_rksv) { return; }
-                this.env.proxy.on('change:status', this, this._onChangeStatus);
-            });
-            onWillUnmount(() => {
+
+            });*/
+            /*onWillUnmount(() => {
                 if (!this.env.pos.config.iface_rksv) { return; }
                 this.env.proxy.off('change:status', this, this._onChangeStatus);
-            });
+            });*/
         }
         async onClick() {
             this.showScreen('RKSVStatusScreen', {
@@ -30,10 +36,14 @@ odoo.define('pos_rksv.RKSVStatusWidget', function(require) {
             });
         }
         _onChangeStatus(posProxy, statusChange) {
-            this._set_smart_status(statusChange.newValue);
-            // We do forward the posProxy status change here to the RKSV handler with a reference to this
-            // So the RKSV Handler is able to open screens
-            this.env.pos.rksv.proxy_status_change(posProxy, statusChange, this);
+            var self = this;
+            if ((statusChange.oldValue.status != statusChange.newValue.status) || self.scheduled_update) {
+                self.scheduled_update = false;
+                this._set_smart_status(statusChange.newValue);
+                // We do forward the posProxy status change here to the RKSV handler with a reference to this
+                // So the RKSV Handler is able to open screens
+                this.env.pos.rksv.proxy_status_change(posProxy, statusChange, this);
+            }
         }
         set_status(status, message) {
             this.state.status = status;
@@ -41,7 +51,7 @@ odoo.define('pos_rksv.RKSVStatusWidget', function(require) {
         }
         _set_smart_status(status) {
             var self = this;
-            var mode = self.env.pos.get('cashbox_mode');
+            var mode = self.env.proxy.get('cashbox_mode');
             if (status.status === 'connected' && (!(self.env.pos.config.state === "setup" || self.env.pos.config.state === "failure" || self.env.pos.config.state === "inactive")) && status.drivers.rksv) {
                 var rksvstatus = status.drivers.rksv ? status.drivers.rksv.status : false;
                 var cashbox_mode = status.drivers.rksv.cashbox_mode;
