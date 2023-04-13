@@ -33,9 +33,9 @@ odoo.define('pos_rksv.RKSVReceiptPopup', function (require) {
     }
 
     RKSVReceiptPopup.template = 'RKSVReceiptPopup';
-    /*RKSVReceiptPopup.defaultProps = {
+    RKSVReceiptPopup.defaultProps = {
         'title': 'Spezial Beleg',
-    };*/
+    };
 
     Registries.Component.add(RKSVReceiptPopup);
 

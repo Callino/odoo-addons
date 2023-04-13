@@ -101,11 +101,11 @@ odoo.define('pos_rksv.RKSVPopupWidget', function (require) {
     }
 
     RKSVPopupWidget.template = 'RKSVPopupWidget';
-    /*RKSVPopupWidget.defaultProps = {
+    RKSVPopupWidget.defaultProps = {
         title: 'Title',
         exec_button_title: 'Ausführen',
         kundeninfo: '',
-    };*/
+    };
 
     Registries.Component.add(RKSVPopupWidget);
 

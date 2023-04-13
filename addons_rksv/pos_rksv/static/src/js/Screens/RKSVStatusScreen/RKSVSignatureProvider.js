@@ -32,9 +32,9 @@ odoo.define('pos_rksv.RKSVSignatureProvider', function(require) {
                         signature = sprov;
                     }
                 });
-                if (typeof signature.try_refresh_status === 'function'){
-                    signature.try_refresh_status(this.env.pos);
-                }
+                // if (typeof signature.try_refresh_status === 'function'){
+                //     signature.try_refresh_status(this.env.pos);
+                // }
             });
         }
         bus_set_signature_state(ev) {

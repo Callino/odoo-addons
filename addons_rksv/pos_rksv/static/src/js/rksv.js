@@ -201,12 +201,12 @@ odoo.define('pos_rksv.rksv', function (require) {
                         if (response.success === false) {
                             self.pos.env.proxy.set('bmf_status_rk', {
                                 'success': false,
-                                'message': "Fehler bei der Kommunikation mit der PosBox!"
+                                'message': response.message
                             });
                         } else {
                             self.pos.env.proxy.set('bmf_status_rk', {
                                 'success': false,
-                                'message': "Fehler bei der Kommunikation mit der PosBox!"
+                                'message': response.message
                             });
                         }
                     },

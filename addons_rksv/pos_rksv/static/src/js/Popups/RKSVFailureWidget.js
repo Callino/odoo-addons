@@ -21,10 +21,10 @@ odoo.define('pos_rksv.RKSVFailureWidget', function (require) {
     }
 
     RKSVFailureWidget.template = 'RKSVFailureWidget';
-    /*RKSVFailureWidget.defaultProps = {
+    RKSVFailureWidget.defaultProps = {
         title: 'Fehler',
         body: 'Genauere Details zum Fehler'
-    };*/
+    };
 
     Registries.Component.add(RKSVFailureWidget);
 

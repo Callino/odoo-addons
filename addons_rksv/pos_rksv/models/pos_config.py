@@ -292,6 +292,8 @@ class POSConfig(models.Model):
         self.state = 'posbox_failed'
 
     def set_active(self):
+        if not self.company_id.bmf_tid or not self.company_id.bmf_benid or not self.company_id.bmf_pin or not self.company_id.bmf_hersteller_atu:
+            raise UserError("Im Unternehmen fehlen BMF Verbindungsdaten.")
         self.state = 'active'
         # Do generate a cashregisterid if there is not id attached already
         self._calc_cashregisterid()

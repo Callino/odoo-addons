@@ -53,9 +53,9 @@ odoo.define('pos_rksv.RKSVFAPopupWidget', function (require) {
     }
 
     RKSVFAPopupWidget.template = 'RKSVFAPopupWidget';
-    /*RKSVFAPopupWidget.defaultProps = {
+    RKSVFAPopupWidget.defaultProps = {
         title: 'Finanzamt Daten',
-    };*/
+    };
 
     Registries.Component.add(RKSVFAPopupWidget);
 
