@@ -153,6 +153,9 @@ odoo.define('pos_rksv.RKSVStatusScreen', function(require) {
         activate_cashbox() {
             Gui.showPopup('RKSVBMFRegisterPopup');
         }
+        refresh_cashbox() {
+            this.env.pos.rksv.update_bmf_rk_status();
+        }
         revalidate_startreceipt() {
             this.env.pos.rksv.bmf_register_start_receipt();
         }
@@ -299,9 +302,12 @@ odoo.define('pos_rksv.RKSVStatusScreen', function(require) {
                     return
                 }
                 self.state.configuration_color = (this.env.pos.rksv.statuses['rksv_products_exists']?'green':'red');
-                if (self.env.pos.rksv.signature) {
-                    self.env.pos.rksv.signature.try_refresh_status()
-                }
+                $(self.state.signatures).each(function(idx, signature) {
+                    if (signature.bmf_status !== true) {
+                        signature.try_refresh_status()
+                    }
+                });
+
                 // Do update the datetime and status here
                 if (status.newValue.drivers.rksv && status.newValue.drivers.rksv.posbox_vienna_datetime) {
                     self.state.rksv_posbox_datetime = status.newValue.drivers.rksv.posbox_vienna_datetime;

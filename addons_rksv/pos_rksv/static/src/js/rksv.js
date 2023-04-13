@@ -201,7 +201,7 @@ odoo.define('pos_rksv.rksv', function (require) {
                     self.create_month_receipt(statusWidget);
                 }
             }
-            if (self.pos.rksv.check_proxy_connection()){
+            if (self.pos.rksv.check_proxy_connection() && !self.pos.env.proxy.get('bmf_status_rk')['connection'] === false){
                 self.pos.rksv.bmf_status_rpc_call().then(
                     function done(response) {
                         self.pos.env.proxy.set('bmf_status_rk', response);
@@ -242,7 +242,7 @@ odoo.define('pos_rksv.rksv', function (require) {
                 this.pos.env.posbus.trigger('change:signature', {signature: config_signature});
             }
             // self.pos.env.proxy.trigger("change:status")
-            self.update_bmf_rk_status();
+            // self.update_bmf_rk_status();
         }
         auto_receipt_needed() {
             // If we miss rksv status - then something else is already problematic - no need to check further
