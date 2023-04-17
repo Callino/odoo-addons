@@ -311,7 +311,7 @@ odoo.define('pos_rksv.RKSVStatusScreen', function(require) {
                                 function done(response) {
                                     self.signature_update_in_progress = false;
                                     if (response.success == false) {
-                                        popup.state.failure = response.message;
+                                        self.state.message = response.message;
                                     } else {
                                         self.state.message = response.status.status;
                                         self.state.color = 'green';
@@ -321,7 +321,7 @@ odoo.define('pos_rksv.RKSVStatusScreen', function(require) {
                                 },
                                 function failed(message) {
                                     self.signature_update_in_progress = false;
-                                    popup.state.failure = message;
+                                    self.state.message = message;
                                 }
                             );
                         }

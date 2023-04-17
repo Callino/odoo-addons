@@ -41,9 +41,6 @@ odoo.define('pos_rksv.rksv', function (require) {
                 if (pos.detail.signature) {
                     self.inform_proxy(pos.detail.signature);
                 }
-                if (pos.detail.signature) {
-                    self.inform_proxy(pos.detail.signature);
-                }
                 self._setSignatureState(pos, pos.detail.signature)
             });
             // Bind to signature status changes
@@ -204,7 +201,8 @@ odoo.define('pos_rksv.rksv', function (require) {
             if (self.pos.rksv.check_proxy_connection() && !self.pos.env.proxy.get('bmf_status_rk')['connection'] === false){
                 self.pos.rksv.bmf_status_rpc_call().then(
                     function done(response) {
-                        self.pos.env.proxy.set('bmf_status_rk', response);
+                        // The same here - why was that here ????
+                        //self.pos.env.proxy.set('bmf_status_rk', response);
                         if (response.success === false) {
                             self.pos.env.proxy.set('bmf_status_rk', {
                                 'success': false,
@@ -232,7 +230,8 @@ odoo.define('pos_rksv.rksv', function (require) {
                     });
                 }
             }
-            this.pos.env.posbus.trigger('change:bmf_status_rk', {pos: self.pos, status: self.pos.env.proxy.get("bmf_status_rk")});
+            // Why the hell was this here ? Trigger the same status we already have ?????
+            //this.pos.env.posbus.trigger('change:bmf_status_rk', {pos: self.pos, status: self.pos.env.proxy.get("bmf_status_rk")});
             var config_signature = null;
             $(self.pos.signatures).each(function(id, sprov) {
                 if ((sprov.cin == self.pos.config.signature_provider_id[1]) || (sprov.public_key == self.pos.config.signature_provider_id[1])) {
@@ -240,11 +239,12 @@ odoo.define('pos_rksv.rksv', function (require) {
                 }
             });
             if (config_signature) {
-                this.pos.rksv.signature = config_signature;
-                this.pos.env.posbus.trigger('change:signature', {signature: config_signature});
+                if ((!this.pos.rksv.signature) || (this.pos.rksv.signature.serial != config_signature.serial)) {
+                    // Just fire event on real change
+                    this.pos.rksv.signature = config_signature;
+                    this.pos.env.posbus.trigger('change:signature', {signature: config_signature});
+                }
             }
-            // self.pos.env.proxy.trigger("change:status")
-            // self.update_bmf_rk_status();
         }
         auto_receipt_needed() {
             // If we miss rksv status - then something else is already problematic - no need to check further
