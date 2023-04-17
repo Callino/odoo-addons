@@ -9,7 +9,7 @@ odoo.define('pos_rksv.rksv', function (require) {
     var Signature = require('pos_rksv.models').Signature;
     var QWeb = core.qweb;
     var rpc = require('web.rpc');
-    const { useListener, useBus } = require("@web/core/utils/hooks");
+    const { useBus } = require("@web/core/utils/hooks");
     const Registries = require('point_of_sale.Registries');
     const PosGlobalState = models.PosGlobalState;
     var _t = core._t;
@@ -225,12 +225,14 @@ odoo.define('pos_rksv.rksv', function (require) {
                     }
                 );
             } else {
-                self.pos.env.proxy.set('bmf_status_rk', {
-                    'success': false,
-                    'message': "Fehler bei der Kommunikation mit der PosBox (Proxy nicht initialisiert)!"
-                });
+                if (!self.pos.rksv.check_proxy_connection()) {
+                    self.pos.env.proxy.set('bmf_status_rk', {
+                        'success': false,
+                        'message': "Fehler bei der Kommunikation mit der PosBox (Proxy nicht initialisiert)!"
+                    });
+                }
             }
-            this.pos.env.posbus.trigger('change:bmf_status_rk', {status: self.pos.env.proxy.get("bmf_status_rk")});
+            this.pos.env.posbus.trigger('change:bmf_status_rk', {pos: self.pos, status: self.pos.env.proxy.get("bmf_status_rk")});
             var config_signature = null;
             $(self.pos.signatures).each(function(id, sprov) {
                 if ((sprov.cin == self.pos.config.signature_provider_id[1]) || (sprov.public_key == self.pos.config.signature_provider_id[1])) {

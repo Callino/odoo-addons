@@ -2,6 +2,7 @@ odoo.define('pos_rksv.RKSVStatusWidget', function(require) {
     'use strict';
 
     const { onMounted, onWillUnmount, useState } = owl;
+    const { useBus } = require("@web/core/utils/hooks");
     const PosComponent = require('point_of_sale.PosComponent');
     const Registries = require('point_of_sale.Registries');
 
@@ -21,14 +22,6 @@ odoo.define('pos_rksv.RKSVStatusWidget', function(require) {
             setInterval(() => {
                 self.scheduled_update = true;
             }, 5000);
-            /*onMounted(() => {
-                if (!this.env.pos.config.iface_rksv) { return; }
-
-            });*/
-            /*onWillUnmount(() => {
-                if (!this.env.pos.config.iface_rksv) { return; }
-                this.env.proxy.off('change:status', this, this._onChangeStatus);
-            });*/
         }
         async onClick() {
             this.showScreen('RKSVStatusScreen', {

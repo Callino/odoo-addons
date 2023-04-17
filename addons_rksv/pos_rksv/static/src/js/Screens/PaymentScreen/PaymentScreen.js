@@ -2,7 +2,7 @@ odoo.define('pos_rksv.RKSVPaymentScreen', function(require) {
     'use strict';
 
     const { useState } = owl;
-    const { useListener } = require("@web/core/utils/hooks");
+    const { useBus } = require("@web/core/utils/hooks");
     const PaymentScreen = require('point_of_sale.PaymentScreen');
     const Registries = require('point_of_sale.Registries');
 

@@ -3,14 +3,14 @@ odoo.define('pos_rksv.chrome', function (require) {
 
     const Chrome = require('point_of_sale.Chrome');
     const Registries = require('point_of_sale.Registries');
-    const { useListener } = require("@web/core/utils/hooks");
+    const { useBus } = require("@web/core/utils/hooks");
 
     const RKSVChrome = (Chrome) =>
         class extends Chrome {
             setup() {
                 super.setup();
-                useListener('show-start-screen', this._showStartScreen);
-                useListener('show-normal-start-screen', this._showNormalStartScreen);
+                useBus(this.env.posbus, 'show-start-screen', this._showStartScreen);
+                useBus(this.env.posbus, 'show-normal-start-screen', this._showNormalStartScreen);
             }
             _showNormalStartScreen() {
                 const { name, props } = super.startScreen;

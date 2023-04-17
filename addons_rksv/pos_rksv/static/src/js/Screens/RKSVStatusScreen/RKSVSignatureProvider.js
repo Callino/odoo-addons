@@ -4,7 +4,7 @@ odoo.define('pos_rksv.RKSVSignatureProvider', function(require) {
     const PosComponent = require('point_of_sale.PosComponent');
     const Registries = require('point_of_sale.Registries');
     const { Gui } = require('point_of_sale.Gui');
-    const { useListener, useBus } = require("@web/core/utils/hooks");
+    const { useBus } = require("@web/core/utils/hooks");
     const { onMounted, onWillUnmount, useState } = owl;
 
     class RKSVSignatureProvider extends PosComponent {
@@ -20,8 +20,8 @@ odoo.define('pos_rksv.RKSVSignatureProvider', function(require) {
                 serial: this.props.signature.serial,
             });
             useBus(this.env.posbus, 'change:bmf_status', this.bus_set_signature_state);
-            useListener('change:bmf_status', function(signature) {
-                self.set_signature_state(signature);
+            useBus(this.env.posbus, 'change:bmf_status', function(signature) {
+                self.set_signature_state(signature.detail.signature);
             });
             onMounted(() => {
                 this.set_signature_state(this.state.signature);

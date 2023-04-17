@@ -2,8 +2,6 @@ odoo.define('pos_rksv.RKSVReceiptPopup', function (require) {
     "use strict";
 
     const { useState, useRef } = owl;
-    const { useListener } = require("@web/core/utils/hooks");
-    const AbstractAwaitablePopup = require('point_of_sale.AbstractAwaitablePopup');
     const Registries = require('point_of_sale.Registries');
     const AbstractReceiptScreen = require('point_of_sale.AbstractReceiptScreen');
 

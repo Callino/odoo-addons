@@ -3,7 +3,6 @@ odoo.define('pos_rksv.RegisterCashboxPopupWidget', function (require) {
 
     const { useState } = owl;
     const { useRef } = owl;
-    const { useListener } = require("@web/core/utils/hooks");
     const RKSVPopupWidget = require('pos_rksv.RKSVPopupWidget');
     const Registries = require('point_of_sale.Registries');
 

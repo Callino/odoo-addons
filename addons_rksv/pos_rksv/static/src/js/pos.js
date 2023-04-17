@@ -10,7 +10,7 @@ odoo.define('pos_rksv.pos', function (require) {
     // Get reference to my RKSV Popup Widgets - you get the reference by using the gui popup handler functions !
     var rpc = require('web.rpc');
     var rksv = require('pos_rksv.rksv');
-    const { useListener, useBus } = require("@web/core/utils/hooks");
+    const { useBus } = require("@web/core/utils/hooks");
     const Registries = require('point_of_sale.Registries');
     const PosGlobalState = models.PosGlobalState;
     var core = require('web.core');
@@ -48,10 +48,10 @@ odoo.define('pos_rksv.pos', function (require) {
 
             // The PosModel does handle the communication back to odoo
             useBus(this.env.posbus, 'create-new-signature', this._writeSignatureToOdoo);
-            this.env.proxy.on('change:bmf_status_rk', this, function (pos, status) {
+            useBus(this.env.posbus, 'change:bmf_status_rk', function (pos, status) {
                 // Save current state - if it did change
-                if (self.config.bmf_gemeldet != status.newValue.success) {
-                    self.config.bmf_gemeldet = status.newValue.success;
+                if (self.config.bmf_gemeldet != pos.detail.status.success) {
+                    self.config.bmf_gemeldet = pos.detail.status.success;
                     // Write back new status to odoo
                     rpc.query({
                         model: 'pos.config',
@@ -62,17 +62,17 @@ odoo.define('pos_rksv.pos', function (require) {
                     });
                 }
             });
-            useBus(this.env.posbus, 'change:bmf_status change:bmf_message', function (signature) {
+            useBus(this.env.posbus, 'change:bmf_status', function (signature) {
                 console.log('Try to fire an update for status in backend');
                 if (!this.env.pos.signature_update){
                     this.env.pos.signature_update = true;
                     rpc.query({
                         model: 'signature.provider',
                         method: 'update_status',
-                        args: [signature.attributes]
+                        args: [signature.detail.signature]
                     }).then(
                         function finish(result) {
-                            this.env.pos.signature_update = false;
+                            self.env.pos.signature_update = false;
                         }
                     );
                 }
