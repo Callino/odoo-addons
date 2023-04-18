@@ -91,46 +91,6 @@ odoo.define('pos_rksv.models', function (require) {
             }
         }
     };
-    /*
-    Here we do add the fields and the models we need to load from the server
-     */
-    // BMF Fields we do need to communicate directly with the BMF SOAP Service
-    // TODO models.load_fields("res.company", [ "bmf_tid", "bmf_benid", "bmf_pin", "bmf_hersteller_atu", "bmf_tax_number", "bmf_vat_number"]);
-    // Update domain on product.product
-    // TODO models.append_domain("product.product", [['rksv_tax_mapping_correct','=',true]]);
-    // Load Odoo configured signature providers - check if this is still needed !
-    // TODO
-    /* models.load_models({
-        model: 'signature.provider',
-        fields: ['display_name', 'issuer', 'name', 'serial', 'subject', 'valid_from', 'valid_until'],
-        domain: function (self) {
-            // Check if a signature provider is configured
-            if ((self.config.signature_provider_id) && (self.config.signature_provider_id.length > 0)) {
-                return [['id', '=', self.config.signature_provider_id[0]]];
-            } else {
-                return [['id', '=', -1]];   // Do not load anything
-            }
-        },
-        loaded: function (self, signature_provider) {
-            console.log('signature provider loaded');
-            if ((signature_provider) && (signature_provider.length == 1)) {
-                var signature = new models.Signature(signature_provider[0], {
-                    pos: self
-                });
-                self.set('signature', signature);
-            }
-        }
-    });
-    models.load_fields("account.tax", ['rksv_tax', 'rksv_tax_category']);
-    models.load_fields("product.product", ['rksv_product_type', 'pos_product_invisible']);
-    models.overwrite_loaded_callback("pos.config", function(self, configs) {
-        this.original.call(this, self, configs);
-        if (self.config.iface_rksv) {
-            self.config.use_proxy = true;
-        }
-    });
-    */
-
 
     /*
     Define Signature Model - in global models namespace
@@ -280,18 +240,6 @@ odoo.define('pos_rksv.models', function (require) {
             });
         }
     }
-
-    /*
-    Define Signature Collection - does hold all available signature providers
-     - in global models namespace
-     */
-    /*class Signatures extends PosCollection{
-        model: Signature,
-        getActiveSignature: function(pos) {
-            var config_signature = pos.get('signature');
-            return this.get(config_signature.get('serial'));
-        }
-    });*/
 
     const RKSVOrderline = (Orderline) => class PosSaleOrderline extends Orderline {
         export_for_printing() {

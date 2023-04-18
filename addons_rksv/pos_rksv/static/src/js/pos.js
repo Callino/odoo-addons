@@ -48,47 +48,20 @@ odoo.define('pos_rksv.pos', function (require) {
 
             // The PosModel does handle the communication back to odoo
             useBus(this.env.posbus, 'create-new-signature', this._writeSignatureToOdoo);
-            this.proxy.on('change:bmf_status_rk', this, function (pos, status) {
-                // Save current state - if it did change
-                if (self.config.bmf_gemeldet != pos.detail.status.success) {
-                    self.config.bmf_gemeldet = pos.detail.status.success;
-                    // Write back new status to odoo
-                    rpc.query({
-                        model: 'pos.config',
-                        method: 'write',
-                        args: [self.config.id, {
-                            'bmf_gemeldet': status.success,
-                        }]
-                    });
-                }
-            });
-            useBus(this.env.posbus, 'change:bmf_status', function (signature) {
-                console.log('Try to fire an update for status in backend');
-                if (!this.env.pos.signature_update){
-                    this.env.pos.signature_update = true;
-                    rpc.query({
-                        model: 'signature.provider',
-                        method: 'update_status',
-                        args: [signature.detail.signature]
-                    }).then(
-                        function finish(result) {
-                            self.env.pos.signature_update = false;
-                        }
-                    );
-                }
-            });
+            this.env.proxy.on('change:bmf_status_rk', this, this.save_state_to_config);
+            useBus(this.env.posbus, 'change:bmf_status', this.update_signature_status);
             // Bind on cashbox_mode flag
-            useBus(this.env.posbus, 'change:cashbox_mode', function (pos, state) {
+            useBus(this.env.posbus, 'change:cashbox_mode', function (ev) {
                 // Write back new status to odoo
                 rpc.query({
                     model: 'pos.config',
                     method: 'write',
-                    args: [pos.config.id, {
-                    'state': state
+                    args: [ev.detail.pos.config.id, {
+                    'state': ev.detail.state
                 }]
                 });
                 // And store it locally
-                self.config.state = state;
+                self.config.state = ev.detail.state;
             });
             // Things to do when all models are loaded
             /*this.ready.then(function () {
@@ -123,6 +96,37 @@ odoo.define('pos_rksv.pos', function (require) {
                     self.env.pos.signature_update = false;
                 }
             );
+        }
+        save_state_to_config (pos, status) {
+            var self = this;
+            // Save current state - if it did change
+            if (self.config.bmf_gemeldet != status.newValue.success) {
+                self.config.bmf_gemeldet = status.newValue.success;
+                // Write back new status to odoo
+                rpc.query({
+                    model: 'pos.config',
+                    method: 'write',
+                    args: [self.config.id, {
+                        'bmf_gemeldet': status.newValue.success,
+                    }]
+                });
+            }
+        }
+        update_signature_status (ev) {
+            console.log('Try to fire an update for status in backend');
+            if (!this.env.pos.signature_update){
+                var self = this;
+                this.env.pos.signature_update = true;
+                rpc.query({
+                    model: 'signature.provider',
+                    method: 'update_status',
+                    args: [ev.detail.signature]
+                }).then(
+                    function finish(result) {
+                        self.env.pos.signature_update = false;
+                    }
+                );
+            }
         }
         push_single_order(order, opts) {
             opts = opts || {};

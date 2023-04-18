@@ -37,24 +37,14 @@ odoo.define('pos_rksv.rksv', function (require) {
             this.last_proxy_status = null;
             var self = this;
             // Will get called when signature model is loaded
-            useBus(this.pos.env.posbus, 'change:signature', function(pos, signature) {
-                if (pos.detail.signature) {
-                    self.inform_proxy(pos.detail.signature);
+            useBus(this.pos.env.posbus, 'change:signature', function(ev) {
+                if (ev.detail.signature) {
+                    self.inform_proxy(ev.detail.signature);
                 }
-                self._setSignatureState(pos, pos.detail.signature)
+                self._setSignatureState(self.pos, ev.detail.signature)
             });
-            // Bind to signature status changes
-            if (this.signatures){
-                useBus(this.pos.env.posbus, 'change:signature', this._setSignatureState);
-            }
             // Bind on RK BMF Status change
-            useBus(this.pos.env.posbus, 'change:bmf_status_rk', function(pos, status) {
-                if (status && status.success) {
-                    self.statuses.kasse = true;
-                } else {
-                    self.statuses.kasse = false;
-                }
-            });
+            this.pos.env.proxy.on('change:bmf_status_rk', this, this.set_kasse_status);
         }
         _setSignatureState(event, signature) {
             if (!signature.isActive(posmodel, signature)) {
@@ -65,6 +55,14 @@ odoo.define('pos_rksv.rksv', function (require) {
                 posmodel.rksv.statuses.signatureinheit = true;
             } else {
                 posmodel.rksv.statuses.signatureinheit = false;
+            }
+        }
+        set_kasse_status(pos, status) {
+            var self = this;
+            if (status && status.newValue.success) {
+                self.statuses.kasse = true;
+            } else {
+                self.statuses.kasse = false;
             }
         }
         proxy_status_change(eh, status, statusWidget) {
@@ -199,44 +197,6 @@ odoo.define('pos_rksv.rksv', function (require) {
                     self.create_month_receipt(statusWidget);
                 }
             }
-            /*
-            if (self.pos.rksv.check_proxy_connection() && !self.pos.env.proxy.get('bmf_status_rk')['connection'] === false){
-                self.pos.rksv.bmf_status_rpc_call().then(
-                    function done(response) {
-                        // The same here - why was that here ????
-                        //self.pos.env.proxy.set('bmf_status_rk', response);
-                        if (response.success === false) {
-                            self.pos.env.proxy.set('bmf_status_rk', {
-                                'success': false,
-                                'message': response.message
-                            });
-                        } else {
-                            self.pos.env.proxy.set('bmf_status_rk', {
-                                'success': false,
-                                'message': response.message
-                            });
-                        }
-                    },
-                    function failed() {
-                        self.pos.env.proxy.set('bmf_status_rk', {
-                            'success': false,
-                            'message': "Fehler bei der Kommunikation mit der PosBox!"
-                        });
-                    }
-                );
-            } else {
-                if (!self.pos.rksv.check_proxy_connection()) {
-                    self.pos.env.proxy.set('bmf_status_rk', {
-                        'success': false,
-                        'message': "Fehler bei der Kommunikation mit der PosBox (Proxy nicht initialisiert)!"
-                    });
-                }
-            }
-             */
-            // Why the hell was this here ? Trigger the same status we already have ?????
-            // this is the only trigger of change:bmf_status_rk which will then set status of 'kasse' update
-            // StatusScreen and may write bmf_gemeldet back to the backend
-            this.pos.env.posbus.trigger('change:bmf_status_rk', {pos: self.pos, status: self.pos.env.proxy.get("bmf_status_rk")});
             var config_signature = null;
             $(self.pos.signatures).each(function(id, sprov) {
                 if ((sprov.cin == self.pos.config.signature_provider_id[1]) || (sprov.public_key == self.pos.config.signature_provider_id[1])) {
@@ -574,7 +534,11 @@ odoo.define('pos_rksv.rksv', function (require) {
             // Try to get new status
             this.bmf_status_rpc_call().then(
                 function done(response) {
-                    self.pos.env.proxy.set('bmf_status_rk', response);
+                    self.pos.env.proxy.set('bmf_status_rk', {
+                        'success': response.success,
+                        'connection': true,
+                        'message': ""
+                    });
                     if (response.success) {
                         self.pos.rksv.statuses['kasse'] = true;
                     }

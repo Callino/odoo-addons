@@ -270,30 +270,9 @@ odoo.define('pos_rksv.RKSVStatusScreen', function(require) {
         rk_status_handler() {
             var self = this;
             // Listen on status update for kasse
-            useBus(this.env.pos.env.posbus, 'change:bmf_status_rk', function(pos) {
-                //check rk  -needs to be registered with bmf
-                if ((!self.env.pos.config.cashregisterid) || (self.env.pos.config.cashregisterid.trim() === "")) {
-                    self.state.cashbox_color = 'orange';
-                    self.state.cashbox_message = "Keine gültige KassenID ist gesetzt !";
-                    self.state.cashbox_activate_display = 'none';
-                } else if (pos.detail.status.success) {
-                    self.state.cashbox_color = 'green';
-                    self.state.cashbox_message = pos.detail.status.message;
-                    self.state.cashbox_activate_display = 'none';
-                } else {
-                    self.state.cashbox_color = 'red';
-                    self.state.cashbox_message = pos.detail.status.message;
-                    if ((self.env.pos.rksv.bmf_auth_data()===true) && (!(pos.detail.status.connection===false))) {
-                        self.state.cashbox_activate_display = 'visible';
-                    } else {
-                        self.state.cashbox_activate_display = 'none';
-                    }
-                }
-                // Button für Außerbetriebnahme einbauen !
-                self.auto_open_close();
-            });
+            this.env.pos.env.proxy.on('change:bmf_status_rk', this, this.set_cashbox_status);
             // Listen on state changes for the mode flag
-            useBus(self.env.posbus, 'change:cashbox_mode', function (pos) {
+            useBus(self.env.posbus, 'change:cashbox_mode', function (ev) {
                 // Do rerender the sprovider view
                 self.render_sproviders();
                 self.auto_open_close();
@@ -441,7 +420,29 @@ odoo.define('pos_rksv.RKSVStatusScreen', function(require) {
             /* Render list of available signatures */
             this.state.signatures = this.env.pos.signatures;
         }
-        
+        set_cashbox_status(pos, status) {
+            var self = this;
+            //check rk  -needs to be registered with bmf
+            if ((!self.env.pos.config.cashregisterid) || (self.env.pos.config.cashregisterid.trim() === "")) {
+                self.state.cashbox_color = 'orange';
+                self.state.cashbox_message = "Keine gültige KassenID ist gesetzt !";
+                self.state.cashbox_activate_display = 'none';
+            } else if (status.newValue.success) {
+                self.state.cashbox_color = 'green';
+                self.state.cashbox_message = status.newValue.message;
+                self.state.cashbox_activate_display = 'none';
+            } else {
+                self.state.cashbox_color = 'red';
+                self.state.cashbox_message = status.newValue.message;
+                if ((self.env.pos.rksv.bmf_auth_data()===true) && (!(status.newValue.connection===false))) {
+                    self.state.cashbox_activate_display = 'visible';
+                } else {
+                    self.state.cashbox_activate_display = 'none';
+                }
+            }
+            // Button für Außerbetriebnahme einbauen !
+            self.auto_open_close();
+        }
     }
     RKSVStatusScreen.template = 'RKSVStatusScreen';
 
