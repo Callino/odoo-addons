@@ -302,6 +302,10 @@ odoo.define('pos_rksv.RKSVStatusScreen', function(require) {
                     // inactive do nothing
                     return
                 }
+                if (!self.active) {
+                    // no changes do nothing
+                    return
+                }
                 self.state.configuration_color = (this.env.pos.rksv.statuses['rksv_products_exists']?'green':'red');
                 if (!self.signature_update_in_progress) {
                     self.signature_update_in_progress = true

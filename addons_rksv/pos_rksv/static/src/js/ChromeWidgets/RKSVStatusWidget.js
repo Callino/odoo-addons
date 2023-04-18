@@ -17,11 +17,13 @@ odoo.define('pos_rksv.RKSVStatusWidget', function(require) {
                 status: 'setup',
                 msg: '',
             });
-            this.env.proxy.on('change:status', this, this._onChangeStatus);
             this.scheduled_update = false;
-            setInterval(() => {
+            this.env.proxy.on('change:status', this, this._onChangeStatus);
+            var scheduleUpdate = function() {
                 self.scheduled_update = true;
-            }, 5000);
+                setTimeout(scheduleUpdate, 30000);
+            }
+            setTimeout(scheduleUpdate, 1000);
         }
         async onClick() {
             this.showScreen('RKSVStatusScreen', {

@@ -231,7 +231,9 @@ odoo.define('pos_rksv.rksv', function (require) {
                 }
             }
             // Why the hell was this here ? Trigger the same status we already have ?????
-            //this.pos.env.posbus.trigger('change:bmf_status_rk', {pos: self.pos, status: self.pos.env.proxy.get("bmf_status_rk")});
+            // this is the only trigger of change:bmf_status_rk which will then set status of 'kasse' update
+            // StatusScreen and may write bmf_gemeldet back to the backend
+            this.pos.env.posbus.trigger('change:bmf_status_rk', {pos: self.pos, status: self.pos.env.proxy.get("bmf_status_rk")});
             var config_signature = null;
             $(self.pos.signatures).each(function(id, sprov) {
                 if ((sprov.cin == self.pos.config.signature_provider_id[1]) || (sprov.public_key == self.pos.config.signature_provider_id[1])) {
