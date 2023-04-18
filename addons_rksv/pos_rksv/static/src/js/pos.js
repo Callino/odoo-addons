@@ -48,7 +48,7 @@ odoo.define('pos_rksv.pos', function (require) {
 
             // The PosModel does handle the communication back to odoo
             useBus(this.env.posbus, 'create-new-signature', this._writeSignatureToOdoo);
-            useBus(this.env.posbus, 'change:bmf_status_rk', function (pos, status) {
+            this.proxy.on('change:bmf_status_rk', this, function (pos, status) {
                 // Save current state - if it did change
                 if (self.config.bmf_gemeldet != pos.detail.status.success) {
                     self.config.bmf_gemeldet = pos.detail.status.success;

@@ -53,7 +53,7 @@
                         <label>BMF (Kasse):</label>
                         <div class="indicator-message "><t t-esc="state.cashbox_message"/></div>
                         <button class="activate_cashbox" t-on-click="activate_cashbox" t-attf-style="display:{{ state.cashbox_activate_display }}">-> Kasse beim BMF anmelden</button>
-                        <button class="refresh_cashbox" t-on-click="refresh_cashbox">-> Kassenstatus aktualisieren</button>
+                        <button class="refresh_cashbox" t-on-click="refresh_cashbox" t-attf-style="display:{{ state.cashbox_activate_display }}">-> Kassenstatus aktualisieren</button>
                     </div>
                     <div class="monthproduct-status-indicator clearfix">
                         <div class="indicator" t-attf-style="background:{{ state.configuration_color }}"/>

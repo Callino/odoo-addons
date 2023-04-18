@@ -68,6 +68,7 @@ odoo.define('pos_rksv.rksv', function (require) {
             }
         }
         proxy_status_change(eh, status, statusWidget) {
+            // Will get called from the statusWidget - and only from the statusWidget
             var self = this;
             // Ignore the status change when rksv is not enabled
             if (!self.pos.config.iface_rksv) {
@@ -198,6 +199,7 @@ odoo.define('pos_rksv.rksv', function (require) {
                     self.create_month_receipt(statusWidget);
                 }
             }
+            /*
             if (self.pos.rksv.check_proxy_connection() && !self.pos.env.proxy.get('bmf_status_rk')['connection'] === false){
                 self.pos.rksv.bmf_status_rpc_call().then(
                     function done(response) {
@@ -230,6 +232,7 @@ odoo.define('pos_rksv.rksv', function (require) {
                     });
                 }
             }
+             */
             // Why the hell was this here ? Trigger the same status we already have ?????
             // this is the only trigger of change:bmf_status_rk which will then set status of 'kasse' update
             // StatusScreen and may write bmf_gemeldet back to the backend
@@ -552,6 +555,8 @@ odoo.define('pos_rksv.rksv', function (require) {
                 return false;
             }
             // Check if we do have an active proxy connection - if not - then not update is possible
+            /*
+            Disabled for now - because we got called from a status callback from the proxy - connection must be ready
             if (!self.check_proxy_connection()) {
                 self.pos.env.proxy.set('bmf_status_rk', {
                     'success': false,
@@ -560,6 +565,7 @@ odoo.define('pos_rksv.rksv', function (require) {
                 });
                 return false;
             }
+             */
             self.pos.env.proxy.set('bmf_status_rk', {
                 'success': false,
                 'connection': true,

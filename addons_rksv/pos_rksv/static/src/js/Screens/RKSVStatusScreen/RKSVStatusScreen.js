@@ -57,7 +57,6 @@ odoo.define('pos_rksv.RKSVStatusScreen', function(require) {
                 }else {
                     this.stay_open = false;
                 }
-                this.env.pos.rksv.update_bmf_rk_status();
                 // Do rerender signature providers
                 this.render_sproviders();
                 // This will signal us the new status as soon as we get it
@@ -156,6 +155,11 @@ odoo.define('pos_rksv.RKSVStatusScreen', function(require) {
         }
         refresh_cashbox() {
             this.env.pos.rksv.update_bmf_rk_status();
+            this.env.pos.env.proxy.set('bmf_status_rk', {
+                'success': false,
+                'connection': true,
+                'message': "Abfrage gestartet..."
+            });
         }
         revalidate_startreceipt() {
             this.env.pos.rksv.bmf_register_start_receipt();
@@ -266,7 +270,7 @@ odoo.define('pos_rksv.RKSVStatusScreen', function(require) {
         rk_status_handler() {
             var self = this;
             // Listen on status update for kasse
-            useBus(this.env.pos.env.posbus, 'change:bmf_status_rk', function(pos, status) {
+            useBus(this.env.pos.env.posbus, 'change:bmf_status_rk', function(pos) {
                 //check rk  -needs to be registered with bmf
                 if ((!self.env.pos.config.cashregisterid) || (self.env.pos.config.cashregisterid.trim() === "")) {
                     self.state.cashbox_color = 'orange';
@@ -289,7 +293,7 @@ odoo.define('pos_rksv.RKSVStatusScreen', function(require) {
                 self.auto_open_close();
             });
             // Listen on state changes for the mode flag
-            useBus(self.env.posbus, 'change:cashbox_mode', function (pos, state) {
+            useBus(self.env.posbus, 'change:cashbox_mode', function (pos) {
                 // Do rerender the sprovider view
                 self.render_sproviders();
                 self.auto_open_close();
@@ -300,10 +304,6 @@ odoo.define('pos_rksv.RKSVStatusScreen', function(require) {
             this.env.proxy.on('change:status', this, function (eh, status) {
                 if (!self.active) {
                     // inactive do nothing
-                    return
-                }
-                if (!self.active) {
-                    // no changes do nothing
                     return
                 }
                 self.state.configuration_color = (this.env.pos.rksv.statuses['rksv_products_exists']?'green':'red');
