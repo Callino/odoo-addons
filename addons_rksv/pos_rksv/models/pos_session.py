@@ -11,6 +11,11 @@ class POSSession(models.Model):
     _name = 'pos.session'
     _inherit = 'pos.session'
 
+    def _get_pos_ui_pos_config(self, params):
+        config = super(POSSession, self)._get_pos_ui_pos_config(params)
+        config['use_proxy'] = config['use_proxy'] or config['iface_rksv']
+        return config
+
     def _loader_params_res_partner(self):
         return {
             'search_params': {

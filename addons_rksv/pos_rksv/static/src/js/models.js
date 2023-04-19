@@ -196,14 +196,6 @@ odoo.define('pos_rksv.models', function (require) {
         try_refresh_status() {
             var self = this;
             var proxyDeferred = $.Deferred();
-            if (!posmodel.rksv.check_proxy_connection()) {
-                this.setStatus({
-                    success: false,
-                    message: "Keine Verbindung zur PosBox, Status kann nicht abgefragt werden !"
-                });
-                proxyDeferred.reject("Keine Verbindung zur PosBox, Status kann nicht abgefragt werden !");
-                return proxyDeferred;
-            }
             // Do initiate the rpc call - we will get the status response
             // Do use the rksv object function for this
             posmodel.rksv.bmf_sprovider_status_rpc_call(this.serial).then(

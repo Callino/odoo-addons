@@ -18,7 +18,7 @@ odoo.define('pos_rksv.RKSVStatusWidget', function(require) {
                 msg: '',
             });
             this.timeout = 1000
-            this.max_timeout = 64000
+            this.max_timeout = 16000
             this.scheduled_update = false;
             this.env.proxy.on('change:status', this, this._onChangeStatus);
             var scheduleUpdate = function() {

@@ -206,6 +206,7 @@ odoo.define('pos_rksv.rksv', function (require) {
             if (config_signature) {
                 if ((!this.pos.rksv.signature) || (this.pos.rksv.signature.serial != config_signature.serial)) {
                     // Just fire event on real change
+                    this.pos.rksv.signature.try_refresh_status();
                     this.pos.rksv.signature = config_signature;
                     this.pos.env.posbus.trigger('change:signature', {signature: config_signature});
                 }

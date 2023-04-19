@@ -52,6 +52,13 @@ odoo.define('pos_rksv.RKSVStatusScreen', function(require) {
             };
             onMounted(() => {
                 this.active = true;
+                var scheduleUpdate = function() {
+                    self.try_to_close();
+                    if (self.active) {
+                        setTimeout(scheduleUpdate, 1000);
+                    }
+                }
+                setTimeout(scheduleUpdate, 1000);
                 if (this.props.stay_open) {
                     this.stay_open = this.props.stay_open;
                 }else {
@@ -280,36 +287,18 @@ odoo.define('pos_rksv.RKSVStatusScreen', function(require) {
         }
         posbox_status_handler () {
             var self = this;
-            this.env.proxy.on('change:status', this, function (eh, status) {
+            this.env.proxy.on('change:status ', this, function (eh, status) {
                 if (!self.active) {
                     // inactive do nothing
                     return
                 }
-                self.state.configuration_color = (this.env.pos.rksv.statuses['rksv_products_exists']?'green':'red');
-                if (!self.signature_update_in_progress) {
-                    self.signature_update_in_progress = true
-                    $(self.state.signatures).each(function (idx, signature) {
-                        if (signature.bmf_status !== true) {
-                            signature.try_refresh_status().then(
-                                function done(response) {
-                                    self.signature_update_in_progress = false;
-                                    if (response.success == false) {
-                                        self.state.message = response.message;
-                                    } else {
-                                        self.state.message = response.status.status;
-                                        self.state.color = 'green';
-                                        self.env.pos.rksv.statuses.signatureinheit = true;
-                                        self.render_sproviders();
-                                    }
-                                },
-                                function failed(message) {
-                                    self.signature_update_in_progress = false;
-                                    self.state.message = message;
-                                }
-                            );
-                        }
-                    });
+                if ((this.env.pos.config.start_product_id) && (this.env.pos.db.get_product_by_id(this.env.pos.config.start_product_id[0]) != 'undefined')
+                && (this.env.pos.config.month_product_id) && (this.env.pos.db.get_product_by_id(this.env.pos.config.month_product_id[0]) != 'undefined')
+                && (this.env.pos.config.null_product_id) && (this.env.pos.db.get_product_by_id(this.env.pos.config.null_product_id[0]) != 'undefined')
+                && (this.env.pos.config.year_product_id) && (this.env.pos.db.get_product_by_id(this.env.pos.config.year_product_id[0]) != 'undefined')) {
+                    this.env.pos.rksv.statuses['rksv_products_exists'] = true;
                 }
+                self.state.configuration_color = (this.env.pos.rksv.statuses['rksv_products_exists']?'green':'red');
                 // Do update the datetime and status here
                 if (status.newValue.drivers.rksv && status.newValue.drivers.rksv.posbox_vienna_datetime) {
                     self.state.rksv_posbox_datetime = status.newValue.drivers.rksv.posbox_vienna_datetime;
@@ -406,6 +395,31 @@ odoo.define('pos_rksv.RKSVStatusScreen', function(require) {
                     self.state.rksv_status_color = 'red';
                     self.state.rksv_status_message = "Kasse ist deaktviert !";
                 }
+                if (!self.signature_update_in_progress) {
+                    self.signature_update_in_progress = true
+                    $(self.state.signatures).each(function (idx, signature) {
+                        if (signature.bmf_status !== true) {
+                            signature.try_refresh_status().then(
+                                function done(response) {
+                                    self.signature_update_in_progress = false;
+                                    if (response.success == false) {
+                                        self.state.message = response.message;
+                                    } else {
+                                        self.state.message = response.status.status;
+                                        self.state.color = 'green';
+                                        self.env.pos.rksv.statuses.signatureinheit = true;
+                                        self.render_sproviders();
+                                    }
+                                    self.auto_open_close();
+                                },
+                                function failed(message) {
+                                    self.signature_update_in_progress = false;
+                                    self.state.message = message;
+                                }
+                            );
+                        }
+                    });
+                }
                 if (self.env.proxy.get('cashbox_mode') == 'signature_failed'){
                     // TODO
                     //self.$el.find('.sprovider-btn').show()
@@ -419,6 +433,7 @@ odoo.define('pos_rksv.RKSVStatusScreen', function(require) {
         render_sproviders () {
             /* Render list of available signatures */
             this.state.signatures = this.env.pos.signatures;
+            this.auto_open_close();
         }
         set_cashbox_status(pos, status) {
             var self = this;
