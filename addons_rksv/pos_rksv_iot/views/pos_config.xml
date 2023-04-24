@@ -6,5 +6,21 @@
             <field name="priority">20</field>
         </record>
 
+        <record id="pos_config_view_form" model="ir.ui.view">
+            <field name="name">pos_config_view_form</field>
+            <field name="model">pos.config</field>
+            <field name="inherit_id" ref="pos_iot.pos_iot_config_view_form"/>
+            <field name="arch" type="xml">
+
+                <xpath expr="//field[@name='iface_scale_id']/.." position="after">
+                    <div class="row">
+                        <label string="RKSV" for="iface_rksv_proxy" class="col-lg-4 o_light_label"/>
+                        <field name="iface_rksv_proxy"/>
+                    </div>
+                </xpath>
+
+            </field>
+        </record>
+
     </data>
 </odoo>

@@ -292,6 +292,10 @@ odoo.define('pos_rksv.RKSVStatusScreen', function(require) {
                     // inactive do nothing
                     return
                 }
+                if (!self.env.proxy.connection) {
+                    // no connection
+                    return
+                }
                 if ((this.env.pos.config.start_product_id) && (this.env.pos.db.get_product_by_id(this.env.pos.config.start_product_id[0]) != 'undefined')
                 && (this.env.pos.config.month_product_id) && (this.env.pos.db.get_product_by_id(this.env.pos.config.month_product_id[0]) != 'undefined')
                 && (this.env.pos.config.null_product_id) && (this.env.pos.db.get_product_by_id(this.env.pos.config.null_product_id[0]) != 'undefined')

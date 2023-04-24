@@ -18,7 +18,7 @@ odoo.define('pos_rksv.devices', function (require) {
 
             function status(){
                 var always = function () {
-                    setTimeout(status, 5000);
+                    setTimeout(status, 3000);
                 };
                 self.connection.rpc('/hw_proxy/status_json_rksv', {
                     'rksv': {
