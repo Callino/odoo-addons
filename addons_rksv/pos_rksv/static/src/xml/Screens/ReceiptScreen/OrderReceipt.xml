@@ -7,7 +7,7 @@
 
             <t t-if="env.pos.config.rksv_at and env.pos.config.iface_rksv">
                 <div t-if="receipt.cashbox_mode=='active'" style="text-align:center;margin: 20px 0;">
-                    <img t-att-src="'data:image/png;base64,' + receipt.qrcode_img" width="50%"/>
+                    <img t-att-src="receipt.qrcode_img" width="50%"/>
                 </div>
                 <div t-if="receipt.cashbox_mode=='signature_failed'" style="text-align:center;margin: 20px 0;">Signatureinheit ausgefallen</div>
             </t>

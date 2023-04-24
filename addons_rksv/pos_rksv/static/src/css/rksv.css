@@ -229,3 +229,21 @@
     color: inherit;
     pointer-events: none;
 }
+
+@media print {
+    .pos, .pos * {
+        position: initial;
+    }
+    .pos .modal-dialog .popup {
+        position: initial;
+        transform: none;
+    }
+    .pos .pos-receipt {
+        position: absolute;
+        top: 0px;
+        left: 0px;
+    }
+    .pos .pos-receipt, .pos-receipt * {
+        visibility: visible;
+    }
+}
