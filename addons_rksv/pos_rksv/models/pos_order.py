@@ -125,3 +125,26 @@ class POSOrder(models.Model):
         order_values['taxSetBesonders'] = ui_order['taxSetBesonders'] if 'taxSetBesonders' in ui_order else None
         order_values['turnOverValue'] = ui_order['turnOverValue'] if 'turnOverValue' in ui_order else None
         return order_values
+
+    def _export_for_ui(self, order):
+        order_values = super(POSOrder, self)._export_for_ui(order)
+        order_values['ocrcodevalue'] = order['ocr_code_value'] if 'ocr_code_value' in order else None
+        order_values['qrcodevalue'] = order['qr_code_value'] if 'qr_code_value' in order else None
+        order_values['receipt_id'] = order['receipt_id'] if 'receipt_id' in order else None
+        order_values['qrcode_img'] = order['qr_code_image'] if 'qr_code_image' in order and order[
+            'qr_code_image'] else None
+        order_values['cashbox_mode'] = order['cashbox_mode'] if 'cashbox_mode' in order else None
+        order_values['typeOfReceipt'] = order['typeOfReceipt'] if 'typeOfReceipt' in order else None
+        order_values['signatureSerial'] = order['signatureSerial'] if 'signatureSerial' in order else None
+        order_values['encryptedTurnOverValue'] = order[
+            'encryptedTurnOverValue'] if 'encryptedTurnOverValue' in order else None
+        order_values['chainValue'] = order['chainValue'] if 'chainValue' in order else None
+        order_values['signedJWSCompactRep'] = order[
+            'signedJWSCompactRep'] if 'signedJWSCompactRep' in order else None
+        order_values['taxSetNormal'] = order['taxSetNormal'] if 'taxSetNormal' in order else None
+        order_values['taxSetErmaessigt1'] = order['taxSetErmaessigt1'] if 'taxSetErmaessigt1' in order else None
+        order_values['taxSetErmaessigt2'] = order['taxSetErmaessigt2'] if 'taxSetErmaessigt2' in order else None
+        order_values['taxSetNull'] = order['taxSetNull'] if 'taxSetNull' in order else None
+        order_values['taxSetBesonders'] = order['taxSetBesonders'] if 'taxSetBesonders' in order else None
+        order_values['turnOverValue'] = order['turnOverValue'] if 'turnOverValue' in order else None
+        return order_values

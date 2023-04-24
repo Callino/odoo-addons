@@ -1,7 +1,7 @@
 odoo.define('pos_rksv.RKSVFAPopupWidget', function (require) {
     "use strict";
 
-    const { useState } = owl;
+    const { onMounted, useState } = owl;
     const AbstractAwaitablePopup = require('point_of_sale.AbstractAwaitablePopup');
     const Registries = require('point_of_sale.Registries');
 
@@ -17,19 +17,23 @@ odoo.define('pos_rksv.RKSVFAPopupWidget', function (require) {
                 rksvfa_image: false,
             });
         }
-        mounted(){
+        setup() {
+            super.setup();
+            onMounted(this._onMounted);
+        }
+        _onMounted(){
             var self = this;
-            var signature = this.env.pos.get('signature');
+            var signature = this.env.pos.rksv.signature;
             // Not sure if we need a signature for the starting record, but I guess we do
             if (signature === null){
                 this.state.message = "Keine Signatureinheit !";
                 return;
             }
-            this.state.serial = signature.get('serial');
+            this.state.serial = signature.serial;
             this.state.cashregisterid = this.env.pos.config.cashregisterid;
             this.state.uid = this.env.pos.company.vat;
             this.state.message = "Bitte warten...";
-            this.pos.env.proxy.connection.rpc(
+            this.env.pos.env.proxy.connection.rpc(
                     '/hw_proxy/rksv_get_fa_data',
                     Object.assign(this.env.pos.rksv.get_rksv_info()),
                     {timeout: 7500}

@@ -49,7 +49,7 @@ odoo.define('pos_rksv.DebugWidget', function(require) {
                     'body': "DEP Crypt Container schreiben",
                     'exec_button_title': 'Erzeugen',
                     'execute': function (popup) {
-                        self.pos.env.proxy.connection.rpc(
+                        self.env.pos.env.proxy.connection.rpc(
                             '/hw_proxy/rksv_write_dep_crypt_container',
                             Object.assign(self.env.pos.rksv.get_rksv_info()),
                             {timeout: 7500}
@@ -58,7 +58,7 @@ odoo.define('pos_rksv.DebugWidget', function(require) {
                                 if (response.success === false) {
                                     popup.state.failure = response.message;
                                 } else {
-                                    self.env.pos.rpc({
+                                    self.rpc({
                                         model: 'pos.config',
                                         method: 'sync_jws',
                                         args: [self.env.pos.config.id, response.jws_sync]
@@ -248,7 +248,7 @@ odoo.define('pos_rksv.DebugWidget', function(require) {
                     {timeout: 7500}
                 ).then(
                     function done(response) {
-                        if (response.success === false) {
+                        if (response.success && response.success === false) {
                             Gui.showPopup('RKSVFailureWidget', {
                                 'title': "Fehler",
                                 'body':  response.message

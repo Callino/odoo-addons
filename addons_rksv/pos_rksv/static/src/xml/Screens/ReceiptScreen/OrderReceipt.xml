@@ -7,14 +7,14 @@
 
             <t t-if="env.pos.config.rksv_at and env.pos.config.iface_rksv">
                 <div t-if="receipt.cashbox_mode=='active'" style="text-align:center;margin: 20px 0;">
-                    <img t-att-src="receipt.qrcode_img" width="50%"/>
+                    <img t-att-src="'data:image/png;base64,' + receipt.qrcode_img" width="50%"/>
                 </div>
                 <div t-if="receipt.cashbox_mode=='signature_failed'" style="text-align:center;margin: 20px 0;">Signatureinheit ausgefallen</div>
             </t>
         </xpath>
-        <xpath expr="//div[hasclass('pos-receipt-order-data')]" position="inside">
+        <xpath expr="//t[@t-esc='receipt.name']/.." position="before">
             <t t-if="env.pos.config.rksv_at and env.pos.config.iface_rksv">
-                <div>Bon Nr.: <t t-esc="receipt.formatted_receipt_id" /></div>
+                <div>Bon Nr.: <t t-esc="receipt.receipt_id" /></div>
                 <div>Kassen Nr.: <t t-esc="env.pos.config.cashregisterid" /></div>
             </t>
         </xpath>

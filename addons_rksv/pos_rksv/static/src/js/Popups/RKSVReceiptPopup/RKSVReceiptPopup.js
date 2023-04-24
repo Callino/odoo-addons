@@ -1,7 +1,7 @@
 odoo.define('pos_rksv.RKSVReceiptPopup', function (require) {
     "use strict";
 
-    const { useState, useRef } = owl;
+    const { onMounted, useState, useRef } = owl;
     const Registries = require('point_of_sale.Registries');
     const AbstractReceiptScreen = require('point_of_sale.AbstractReceiptScreen');
 
@@ -13,16 +13,20 @@ odoo.define('pos_rksv.RKSVReceiptPopup', function (require) {
         constructor() {
             super(...arguments);
             this.state = useState({
-                'title': arguments[1].title,
+                'title': arguments[0].title,
             });
-            this.currentReceipt = arguments[1].receipt;
-            this.orderReceipt = useRef('order-receipt');
+            this.currentReceipt = arguments[0].receipt;
         }
-        mounted() {
+        setup() {
+            super.setup();
+            this.orderReceipt = useRef('order-receipt');
             setTimeout(async () => await this.handleAutoPrint(), 0);
         }
         cancel() {
-            this.trigger('close-popup');
+            this.env.posbus.trigger('close-popup', {
+                popupId: this.props.id,
+                response: { confirmed: false, payload: null },
+            });
         }
         async handleAutoPrint() {
             this._printReceipt();
