@@ -234,9 +234,15 @@
     .pos, .pos * {
         position: initial;
     }
+    .pos .pos-content {
+        width: 100%;
+        position: absolute !important;
+    }
     .pos .modal-dialog .popup {
-        position: initial;
-        transform: none;
+        position: absolute !important;
+        transform: none !important;
+        top: 0px !important;
+        left: 0px !important;
     }
     .pos .pos-receipt {
         position: absolute;
