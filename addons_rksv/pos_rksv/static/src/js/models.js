@@ -266,7 +266,7 @@ odoo.define('pos_rksv.models', function (require) {
             if (!this.pos.config.iface_rksv)
                 return;
             this.qrcodevalue = json.qrcodevalue;
-            this.qrcode_img = json.qrcode_img;
+            this.qrcode_img = "data:image/png;base64," + json.qrcode_img;
             this.ocrcodevalue = json.ocrcodevalue;
             this.receipt_id = json.receipt_id;
             this.cashbox_mode = json.cashbox_mode;
