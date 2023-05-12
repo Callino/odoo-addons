@@ -126,3 +126,23 @@ class POSOrder(models.Model):
         order_values['taxSetBesonders'] = ui_order['taxSetBesonders'] if 'taxSetBesonders' in ui_order else None
         order_values['turnOverValue'] = ui_order['turnOverValue'] if 'turnOverValue' in ui_order else None
         return order_values
+
+    def _export_for_ui(self, order):
+        order_values = super(POSOrder, self)._export_for_ui(order)
+        order_values['ocrcodevalue'] = order.ocr_code_value
+        order_values['qrcodevalue'] = order.qr_code_value
+        order_values['receipt_id'] = order.receipt_id
+        order_values['qrcode_img'] = order.qr_code_image
+        order_values['cashbox_mode'] = order.cashbox_mode
+        order_values['typeOfReceipt'] = order.typeOfReceipt
+        order_values['signatureSerial'] = order.signatureSerial
+        order_values['encryptedTurnOverValue'] = order.encryptedTurnOverValue
+        order_values['chainValue'] = order.chainValue
+        order_values['signedJWSCompactRep'] = order.signedJWSCompactRep
+        order_values['taxSetNormal'] = order.taxSetNormal
+        order_values['taxSetErmaessigt1'] = order.taxSetErmaessigt1
+        order_values['taxSetErmaessigt2'] = order.taxSetErmaessigt2
+        order_values['taxSetNull'] = order.taxSetNull
+        order_values['taxSetBesonders'] = order.taxSetBesonders
+        order_values['turnOverValue'] = order.turnOverValue
+        return order_values
