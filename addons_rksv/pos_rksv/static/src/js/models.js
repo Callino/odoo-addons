@@ -282,6 +282,7 @@ odoo.define('pos_rksv.models', function (require) {
             var data = super.export_as_JSON(...arguments);
             if (!this.pos.config.iface_rksv)
                 return data;
+            let date    = new Date();
             var rksv_data = {
                 'qrcodevalue': this.qrcodevalue,
                 'qrcode_img': this.qrcode_img,
@@ -306,7 +307,18 @@ odoo.define('pos_rksv.models', function (require) {
                 'taxSetErmaessigt2': this.taxSetErmaessigt2,
                 'taxSetNull': this.taxSetNull,
                 'taxSetBesonders': this.taxSetBesonders,
-                'turnOverValue': this.turnOverValue
+                'turnOverValue': this.turnOverValue,
+                    'date': {
+                    year: date.getFullYear(),
+                    month: date.getMonth(),
+                    date: date.getDate(),       // day of the month
+                    day: date.getDay(),         // day of the week
+                    hour: date.getHours(),
+                    minute: date.getMinutes() ,
+                    isostring: date.toISOString(),
+                    localestring: this.formatted_validation_date,
+                    validation_date: this.validation_date,
+                },
             };
             return Object.assign(rksv_data, data);
         }
