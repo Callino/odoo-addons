@@ -242,6 +242,8 @@ odoo.define('pos_rksv.models', function (require) {
         }
         export_for_printing_JSON_safe() {
             var data = super.export_for_printing(...arguments);
+            data.rksv_product_type = this.product.rksv_product_type;
+            data.taxes = this.get_taxes();
             data.pack_lot_lines = false;
             return data;
         }
