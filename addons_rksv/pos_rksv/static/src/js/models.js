@@ -308,7 +308,8 @@ odoo.define('pos_rksv.models', function (require) {
                 'taxSetNull': this.taxSetNull,
                 'taxSetBesonders': this.taxSetBesonders,
                 'turnOverValue': this.turnOverValue,
-                    'date': {
+                'orderlines': data['lines'],
+                'date': {
                     year: date.getFullYear(),
                     month: date.getMonth(),
                     date: date.getDate(),       // day of the month
