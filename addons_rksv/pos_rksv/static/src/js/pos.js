@@ -138,7 +138,7 @@ odoo.define('pos_rksv.pos', function (require) {
             }
             // We do return a new Promise - as they original function does
             return new Promise(function (resolve, reject) {
-                self.env.proxy.message('rksv_order', order.export_as_JSON()).then(
+                self.env.proxy.message('rksv_order', order.export_for_printing()).then(
                     function done(result) {
                         if (!result['success']) {
                             order.set_sign_failed();
