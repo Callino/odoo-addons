@@ -240,6 +240,11 @@ odoo.define('pos_rksv.models', function (require) {
             data.taxes = this.get_taxes();
             return data;
         }
+        export_for_printing_JSON_safe() {
+            var data = super.export_for_printing(...arguments);
+            data.pack_lot_lines = false;
+            return data;
+        }
     }
 
     const RKSVOrder = (Order) => class PosSaleOrder extends Order {
@@ -277,26 +282,41 @@ odoo.define('pos_rksv.models', function (require) {
             data.uid = this.uid;
             return data;
         }
+        export_for_printing_JSON_safe() {
+            var data = super.export_for_printing(...arguments);
+            if (!this.pos.config.iface_rksv)
+                return data;
+            var orderlines = [];
+            this.orderlines.forEach(function(orderline){
+                orderlines.push(orderline.export_for_printing_JSON_safe());
+            });
+            data.qrcodevalue = this.qrcodevalue;
+            data.qrcode_img = this.qrcode_img;
+            data.ocrcodevalue = this.ocrcodevalue;
+            data.receipt_id = this.receipt_id;
+            data.formatted_receipt_id = this.formatted_receipt_id;
+            data.kassenidentifikationsnummer = this.pos.config.cashregisterid;
+            data.start_receipt = this.start_receipt;
+            data.year_receipt = this.year_receipt;
+            data.month_receipt = this.month_receipt;
+            data.null_receipt = this.null_receipt;
+            data.set_serial = this.set_serial;
+            data.cashbox_mode = this.cashbox_mode;
+            data.uid = this.uid;
+            data.orderlines = orderlines;
+            return data;
+        }
         // Include RKSV Data for the export to odoo
         export_as_JSON() {
             var data = super.export_as_JSON(...arguments);
             if (!this.pos.config.iface_rksv)
                 return data;
-            let date    = new Date();
             var rksv_data = {
                 'qrcodevalue': this.qrcodevalue,
                 'qrcode_img': this.qrcode_img,
                 'receipt_id': this.receipt_id,
                 'ocrcodevalue': this.ocrcodevalue,
                 'cashbox_mode': this.cashbox_mode,
-                'formatted_receipt_id': this.formatted_receipt_id,
-                'kassenidentifikationsnummer': this.pos.config.cashregisterid,
-                'start_receipt': this.start_receipt,
-                'year_receipt': this.year_receipt,
-                'month_receipt': this.month_receipt,
-                'null_receipt': this.null_receipt,
-                'set_serial': this.set_serial,
-                'uid': this.uid,
                 'typeOfReceipt': this.typeOfReceipt,
                 'signatureSerial': this.signatureSerial,
                 'encryptedTurnOverValue': this.encryptedTurnOverValue,
@@ -307,19 +327,7 @@ odoo.define('pos_rksv.models', function (require) {
                 'taxSetErmaessigt2': this.taxSetErmaessigt2,
                 'taxSetNull': this.taxSetNull,
                 'taxSetBesonders': this.taxSetBesonders,
-                'turnOverValue': this.turnOverValue,
-                'orderlines': data['lines'],
-                'date': {
-                    year: date.getFullYear(),
-                    month: date.getMonth(),
-                    date: date.getDate(),       // day of the month
-                    day: date.getDay(),         // day of the week
-                    hour: date.getHours(),
-                    minute: date.getMinutes() ,
-                    isostring: date.toISOString(),
-                    localestring: this.formatted_validation_date,
-                    validation_date: this.validation_date,
-                },
+                'turnOverValue': this.turnOverValue
             };
             return Object.assign(rksv_data, data);
         }
