@@ -16,17 +16,6 @@ class POSSession(models.Model):
         config['use_proxy'] = config['use_proxy'] or config['iface_rksv']
         return config
 
-    def _loader_params_res_partner(self):
-        return {
-            'search_params': {
-                'domain': [('id', '<', 500)],
-                'fields': [
-                    'name', 'street', 'city', 'state_id', 'country_id', 'vat', 'lang', 'phone', 'zip', 'mobile', 'email',
-                    'barcode', 'write_date', 'property_account_position_id', 'property_product_pricelist', 'parent_name'
-                ],
-            },
-        }
-
     def _loader_params_res_company(self):
         params = super(POSSession, self)._loader_params_res_company()
         params['search_params']['fields'].extend(["bmf_tid", "bmf_benid", "bmf_pin", "bmf_hersteller_atu", "bmf_tax_number", "bmf_vat_number"])
