@@ -24,6 +24,7 @@
               <script type="text/javascript" src="/pos_rksv/static/src/js/Screens/ReceiptScreen/ReceiptScreen.js"></script>
               <script type="text/javascript" src="/pos_rksv/static/src/js/Screens/RKSVStatusScreen/RKSVStatusScreen.js"></script>
               <script type="text/javascript" src="/pos_rksv/static/src/js/Screens/RKSVStatusScreen/RKSVSignatureProvider.js"></script>
+              <script type="text/javascript" src="/pos_rksv/static/src/js/Screens/DummyScreen.js"></script>
               <link href="/pos_rksv/static/src/css/rksv.css" rel="stylesheet"/>
           </xpath>
         </template>

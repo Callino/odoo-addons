@@ -337,6 +337,7 @@ odoo.define('pos_rksv.RKSVStatusScreen', function(require) {
                         // Validation of start receipt failed - activate the try again button
                         self.state.rksv_status_color = 'orange';
                         self.state.button_register_startreceipt = true;
+                        self.state.button_start_receipt_set_valid = true;
                         self.state.button_register_cashbox = false;
                         rksvmessage = "Validierungsfehler!";
                     } else if (rksvstatus == 'failure') {
