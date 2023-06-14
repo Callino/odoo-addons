@@ -41,6 +41,7 @@ Registrierkassen Modul für die Anforderungen der Österreichischen Registrierka
         'static/src/xml/Screens/RKSVStatusScreen/CurrentRKSVSignature.xml',
         'static/src/xml/Screens/RKSVStatusScreen/RKSVSignatureProvider.xml',
         'static/src/xml/Screens/PaymentScreen/PaymentScreen.xml',
+        'static/src/xml/Screens/DummyScreen.xml',
         'static/src/xml/Popups/RegisterCashboxPopupWidget.xml',
         'static/src/xml/Popups/RKSVFailureWidget.xml',
         'static/src/xml/Popups/RKSVPopupWidget.xml',

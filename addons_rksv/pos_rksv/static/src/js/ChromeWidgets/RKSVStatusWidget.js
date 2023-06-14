@@ -18,11 +18,11 @@ odoo.define('pos_rksv.RKSVStatusWidget', function(require) {
         }
         mounted() {
             if (!this.env.pos.config.iface_rksv) { return; }
-            this.env.pos.proxy.on('change:status', this, this._onChangeStatus);
+            this.env.pos.proxy.on('change:status', this, this._onChangeStatus, this);
         }
         willUnmount() {
             if (!this.env.pos.config.iface_rksv) { return; }
-            this.env.pos.proxy.off('change:status', this, this._onChangeStatus);
+            this.env.pos.proxy.off('change:status', this, this._onChangeStatus, this);
         }
         async onClick() {
             this.showScreen('RKSVStatusScreen', {

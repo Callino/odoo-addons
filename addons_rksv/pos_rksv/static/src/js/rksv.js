@@ -249,8 +249,17 @@ odoo.define('pos_rksv.rksv', function (require) {
                     this.statuses['signatureinheit'] &&
                     this.statuses['rksv'];
         },
-        print_order: function(order) {
-            this.pos.trigger('show-main-screen', 'ReceiptScreen');
+        async print_order (order) {
+            var name = 'ReceiptScreen'
+            var props = {forceClose: true};
+            const { confirmed, payload } = await Gui.showTempScreen('DummyScreen', {
+                props,
+            });
+            if (confirmed) {
+                return;
+            } else {
+                return;
+            }
         },
         create_dummy_order: function(product_id, reference) {
             // Get current order
@@ -419,37 +428,35 @@ odoo.define('pos_rksv.rksv', function (require) {
                 return;
             }
             var self = this;
-            var op_popup = this.pos.gui.popup_instances.rksv_popup_widget;
-            op_popup.show({}, 'Startbeleg valid setzen', 'Valid');
-            // First - do disable old event handlers
-            op_popup.$('.execute_button').off();
-            // Then install new click handler
-            op_popup.$('.execute_button').click(function() {
-                op_popup.loading('Erzwinge Validierung des Startbelegs');
-                if (self.check_proxy_connection()){
-                    self.proxy_rpc_call(
-                        '/hw_proxy/valid_start_receipt',
-                        Object.assign(self.get_rksv_info()),
-                        self.timeout
-                    ).then(
-                        function done(response) {
-                            if (response.success == false) {
-                                op_popup.failure(response.message);
-                            } else {
-                                op_popup.success(response.message);
-                                // Do set the cashbox_mode to active
-                                self.pos.set('cashbox_mode', 'active');
+            Gui.showPopup('RKSVPopupWidget', {
+                'title': "Startbeleg",
+                'body':  "Startbeleg an BMF senden",
+                'exec_button_title': 'Senden',
+                'execute': function(popup) {
+                    popup.state.loading = 'Erzwinge Validierung des Startbelegs';
+                    if (self.check_proxy_connection()){
+                        self.proxy_rpc_call(
+                            '/hw_proxy/valid_start_receipt',
+                            Object.assign(self.get_rksv_info()),
+                            self.timeout
+                        ).then(
+                            function done(response) {
+                                if (response.success == false) {
+                                    popup.state.failure = response.message;
+                                } else {
+                                    popup.state.success = response.message;
+                                    // Do set the cashbox_mode to active
+                                    self.pos.set('cashbox_mode', 'active');
+                                }
+                            },
+                            function failed() {
+                                popup.state.failure = "Fehler bei der Kommunikation mit der PosBox!";
                             }
-                        },
-                        function failed() {
-                            op_popup.failure("Fehler bei der Kommunikation mit der PosBox!");
-                        }
-                    );
-                } else {
-                    op_popup.failure("Fehler bei der Kommunikation mit der PosBox (Proxy nicht initialisiert)!");
-                }
-                op_popup.$('.execute_button').hide();
-                op_popup.$('.close_button').show();
+                        );
+                    } else {
+                        popup.state.failure = "Fehler bei der Kommunikation mit der PosBox (Proxy nicht initialisiert)!";
+                    }
+                },
             });
         },
         bmf_status_rpc_call: function () {

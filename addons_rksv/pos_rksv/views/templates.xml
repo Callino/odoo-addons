@@ -6,6 +6,7 @@
               <script type="text/javascript" src="/pos_rksv/static/src/js/db.js"></script>
               <script type="text/javascript" src="/pos_rksv/static/src/js/models.js"></script>
               <script type="text/javascript" src="/pos_rksv/static/src/js/pos.js"></script>
+              <script type="text/javascript" src="/pos_rksv/static/src/js/ScreenGui.js"></script>
               <script type="text/javascript" src="/pos_rksv/static/src/js/rksv.js"></script>
               <script type="text/javascript" src="/pos_rksv/static/src/js/devices.js"></script>
               <script type="text/javascript" src="/pos_rksv/static/src/js/Chrome.js"></script>
@@ -24,6 +25,7 @@
               <script type="text/javascript" src="/pos_rksv/static/src/js/Screens/ReceiptScreen/ReceiptScreen.js"></script>
               <script type="text/javascript" src="/pos_rksv/static/src/js/Screens/RKSVStatusScreen/RKSVStatusScreen.js"></script>
               <script type="text/javascript" src="/pos_rksv/static/src/js/Screens/RKSVStatusScreen/RKSVSignatureProvider.js"></script>
+              <script type="text/javascript" src="/pos_rksv/static/src/js/Screens/DummyScreen.js"></script>
               <link href="/pos_rksv/static/src/css/rksv.css" rel="stylesheet"/>
           </xpath>
         </template>
