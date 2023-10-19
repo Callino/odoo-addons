@@ -162,7 +162,7 @@ class AccountJournal(models.Model):
             result = box.query_box("/hw_proxy/status_json_rksv", params)
             _logger.info("Got Status for cashregister: %s", result)
             if result['rksv']['start_receipt_needed']:
-                params = self._get_base_order_params()
+                params = journal._get_base_order_params()
                 params.update({
                     "start_receipt": True,
                 })
@@ -170,7 +170,7 @@ class AccountJournal(models.Model):
                 _logger.info("Got Result on create start receipt: %s", result)
                 if result['success']:
                     # Validate start receipt
-                    params = self._get_cashregister_params()
+                    params = journal._get_cashregister_params()
                     result = box.query_box("/hw_proxy/rksv_startbeleg_registrieren", params)
                     _logger.info("Got Result on register start receipt: %s", result)
                     if result['success']:
@@ -191,7 +191,7 @@ class AccountJournal(models.Model):
                     })
             elif not result['rksv']['has_valid_start_receipt']:
                 # Start receipt does exists - but is not validated yet
-                params = self._get_cashregister_params()
+                params = journal._get_cashregister_params()
                 result = box.query_box("/hw_proxy/rksv_startbeleg_registrieren", params)
                 _logger.info("Got Result on register start receipt: %s", result)
                 if not result['success'] and journal.bmf_test_mode:
@@ -218,7 +218,7 @@ class AccountJournal(models.Model):
                         'rksv_state': 'ready',
                     })
             elif result['rksv']['year_receipt_needed']:
-                params = self._get_base_order_params()
+                params = journal._get_base_order_params()
                 params.update({
                     "year_receipt": True,
                 })
@@ -230,7 +230,7 @@ class AccountJournal(models.Model):
                         'rksv_state': 'error',
                     })
                 else:
-                    params = self._get_cashregister_params()
+                    params = journal._get_cashregister_params()
                     params.update({
                         'belegnr': result['receipt_id']
                     })
@@ -241,7 +241,7 @@ class AccountJournal(models.Model):
                             'rksv_state': 'error',
                         })
             elif result['rksv']['month_receipt_needed']:
-                params = self._get_base_order_params()
+                params = journal._get_base_order_params()
                 params.update({
                     "month_receipt": True,
                 })
@@ -253,7 +253,7 @@ class AccountJournal(models.Model):
                         'rksv_state': 'error',
                     })
                 else:
-                    params = self._get_cashregister_params()
+                    params = journal._get_cashregister_params()
                     params.update({
                         'belegnr': result['receipt_id']
                     })
