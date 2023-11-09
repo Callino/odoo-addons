@@ -23,6 +23,7 @@ Ermöglicht das Signieren von Bar Rechnungen im Odoo Backend
     ],
     'data': [
         'security/ir.model.access.csv',
+        'reports/account_invoice.xml',
         'views/account_invoice.xml',
         'views/account_journal.xml',
         'views/account_payment.xml',
