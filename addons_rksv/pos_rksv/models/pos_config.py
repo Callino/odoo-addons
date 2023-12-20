@@ -268,7 +268,7 @@ class POSConfig(models.Model):
     def _get_unchecked_dummy_orders(self):
         for record in self:
             orders = self.env['pos.order'].search([
-                ('config_id', '=', self.id),
+                ('config_id', '=', record.id),
                 ('jws_dummy', '=', True),
                 ('jws_dummy_ok', '=', False)
             ])
