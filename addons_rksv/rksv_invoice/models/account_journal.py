@@ -296,7 +296,7 @@ class AccountJournal(models.Model):
             'journal_id': self.id,
         })
         payment = self.env['account.payment'].with_context(disable_rksv=True).create(payment_data)
-        payment.post()
+        payment.action_post()
 
     def register_payment(self, payment):
         self.ensure_one()
