@@ -74,6 +74,18 @@ class AccountJournal(models.Model):
                     'rksv_state': 'error',
                 })
 
+    def create_new_cashbox(self):
+        for journal in self.filtered(lambda j: j.rksv_at):
+            journal.update({
+                'posbox_registered': False,
+                'rksv_state': 'new',
+                'cashregisterid': uuid.uuid1(),
+                'bmf_gemeldet': False,
+            })
+            journal.create_rksv_on_posbox()
+            journal.register_cashbox_bmf()
+            journal.set_sprovider_posbox()
+
     def create_rksv_on_posbox(self):
         for journal in self.filtered(lambda j: j.rksv_at and not j.posbox_registered):
             box = journal.signature_provider_id.box_id
@@ -178,7 +190,7 @@ class AccountJournal(models.Model):
                 })
                 result = box.query_box("/hw_proxy/rksv_order", params)
                 _logger.info("Got Result on create start receipt: %s", result)
-                self._create_dummy_payment(result, "Startbeleg")
+                journal._create_dummy_payment(result, "Startbeleg")
                 if result['success']:
                     # Validate start receipt
                     params = journal._get_cashregister_params()
@@ -241,7 +253,7 @@ class AccountJournal(models.Model):
                         'rksv_state': 'error',
                     })
                 else:
-                    self._create_dummy_payment(result, "Jahresbeleg")
+                    journal._create_dummy_payment(result, "Jahresbeleg")
                     params = journal._get_cashregister_params()
                     params.update({
                         'belegnr': result['receipt_id']
@@ -265,7 +277,7 @@ class AccountJournal(models.Model):
                         'rksv_state': 'error',
                     })
                 else:
-                    self._create_dummy_payment(result, "Monatsbeleg")
+                    journal._create_dummy_payment(result, "Monatsbeleg")
                     params = journal._get_cashregister_params()
                     params.update({
                         'belegnr': result['receipt_id']
@@ -281,6 +293,20 @@ class AccountJournal(models.Model):
                     'rksv_status_text': 'Alles in Ordnung',
                     'rksv_state': 'ready',
                 })
+
+    def button_create_null_beleg(self):
+        for journal in self.filtered(lambda j: j.rksv_at and j.bmf_gemeldet):
+            payment_data = {
+                'name': 'Nullbeleg',
+                'payment_type': 'inbound',
+                'partner_type': 'customer',
+                'partner_id': journal.company_id.partner_id.id,
+                'payment_method_id': self.env.ref('account.account_payment_method_manual_in').id,
+                'amount': 0.00,
+                'journal_id': journal.id,
+            }
+            payment = self.env['account.payment'].create(payment_data)
+            payment.action_post()
 
     def _create_dummy_payment(self, result, name):
         # Create a dummy payment here with the result
@@ -310,9 +336,9 @@ class AccountJournal(models.Model):
                         "rksv_tax": True,
                         "rksv_tax_category": "taxSetNull"
                     }],
-                    "price_with_tax": payment.amount
+                    "price_with_tax": payment.amount if payment.payment_type == 'inbound' else payment.amount * -1
                 }],
-                "total_with_tax": payment.amount,
+                "total_with_tax": payment.amount if payment.payment_type == 'inbound' else payment.amount * -1,
             })
             box = self.signature_provider_id.box_id
             result = box.query_box("/hw_proxy/rksv_order", params)

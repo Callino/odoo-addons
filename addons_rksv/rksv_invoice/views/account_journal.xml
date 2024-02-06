@@ -10,18 +10,22 @@
             <field name="arch" type="xml">
                 <xpath expr="//notebook" position="inside">
                     <page name="rksv" string="RKSV" attrs="{'invisible': ['|',('type', '!=', 'cash'),('company_rksv_at','=',False)]}">
+                        <header>
+                            <field name="rksv_state" widget="statusbar"/>
+                        </header>
                         <header attrs="{'invisible': ['|',('rksv_at', '!=', True),('type', '!=', 'cash')]}">
                             <button name="update_rksv_status" type="object" string="Update Status"/>
                             <button name="create_rksv_on_posbox" type="object" string="Auf PosBox Registrieren" attrs="{'invisible': [('posbox_registered', '=', True)]}"/>
                             <button name="register_cashbox_bmf" type="object" string="Anmeldung beim BMF" attrs="{'invisible': [('bmf_gemeldet', '=', True)]}"/>
                             <button name="set_sprovider_posbox" type="object" string="Signature Provider setzen"/>
-                            <button name="set_valid_start_receipt" type="object" string="Startbeleg Valide setzen" groups="base.group_no_one"/>
                             <button name="check_status" type="object" string="Integritätsprüfung"/>
-                            <button name="delete_start_receipt" type="object" string="Startbeleg löschen" groups="base.group_no_one"/>
-                            <button name="rksv_write_dep_crypt_container" type="object" string="DEP Dateien erzeugen"/>
                         </header>
-                        <header>
-                            <field name="rksv_state" widget="statusbar"/>
+                        <header attrs="{'invisible': ['|',('rksv_at', '!=', True),('type', '!=', 'cash')]}">
+                            <button name="set_valid_start_receipt" type="object" string="Startbeleg Valide setzen" groups="base.group_no_one"/>
+                            <button name="delete_start_receipt" type="object" string="Startbeleg löschen" groups="base.group_no_one"/>
+                            <button name="create_new_cashbox" type="object" string="Neue Kasse melden" groups="base.group_no_one"/>
+                            <button name="button_create_null_beleg" type="object" string="Null Beleg" groups="base.group_no_one"/>
+                            <button name="rksv_write_dep_crypt_container" type="object" string="DEP Dateien erzeugen"/>
                         </header>
                         <field name="rksv_status_text" nolabel="1" colspan="2"/>
                         <group>
