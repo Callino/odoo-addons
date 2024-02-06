@@ -18,7 +18,7 @@
                             <button name="check_status" type="object" string="Integritätsprüfung"/>
                             <button name="delete_start_receipt" type="object" string="Startbeleg löschen" groups="base.group_no_one"/>
                             <button name="rksv_write_dep_crypt_container" type="object" string="DEP Dateien erzeugen"/>
-                            <field name="rksv_state" widget="statusbar" statusbar_visible=""/>
+                            <field name="rksv_state" widget="statusbar"/>
                         </header>
                         <field name="rksv_status_text" nolabel="1"/>
                         <group>
