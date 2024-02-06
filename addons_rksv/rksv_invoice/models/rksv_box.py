@@ -1,6 +1,7 @@
 from odoo import api, fields, models
 from odoo.exceptions import UserError
 import requests
+requests.packages.urllib3.disable_warnings()
 from datetime import datetime
 import time
 from odoo.tools import DEFAULT_SERVER_DATETIME_FORMAT
