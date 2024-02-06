@@ -107,7 +107,6 @@ class RKSVBox(models.Model):
                         'x509': provider['x509'],
                         'company_id': company.id if company else None,
                         'box_id': box.id,
-                        'state': 'ready',
                     }
                     if not sprovider:
                         sprovider = self.env['signature.provider'].create(sproviderData)
