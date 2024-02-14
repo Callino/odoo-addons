@@ -24,7 +24,7 @@ odoo.define('pos_pay_invoice.InvoiceListScreen', function(require) {
         reload() {
             this.updateInvoiceList();
         }
-        pay_invoice() {
+        async pay_invoice() {
             var order = this.env.pos.get_order();
             if ((!order) || (!order.is_empty())) {
                 // Create a new order
@@ -34,6 +34,13 @@ odoo.define('pos_pay_invoice.InvoiceListScreen', function(require) {
             }
             var client_id = this.state.selectedInvoice.partner_id[0];
             var partner = this.env.pos.db.get_partner_by_id(client_id);
+            if (!partner) {
+                await this.env.pos.load_new_partners();
+                partner = this.env.pos.db.get_partner_by_id(client_id);
+                if (!partner) {
+                    this.trigger('close-temp-screen');
+                }
+            }
             // Set invoice partner as order client
             order.set_client(partner);
             order.fiscal_position = _.find(this.env.pos.fiscal_positions, function (fp) {

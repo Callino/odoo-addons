@@ -24,21 +24,13 @@ Pay invoice directly on in pos session
     ],
     'assets': {
         'point_of_sale.assets': [
-            'pos_pay_invoice/static/src/js/pos.js',
-            'pos_pay_invoice/static/src/js/models.js',
-            'pos_pay_invoice/static/src/js/db.js',
-            'pos_pay_invoice/static/src/js/Screens/ProductScreen/InvoicesButton.js',
-            'pos_pay_invoice/static/src/js/Screens/ProductScreen/ProductScreen.js',
-            'pos_pay_invoice/static/src/js/Screens/InvoiceList/InvoiceLine.js',
-            'pos_pay_invoice/static/src/js/Screens/InvoiceList/InvoiceListScreen.js',
-            'pos_pay_invoice/static/src/css/invoices.css'
-        ]
+            "pos_pay_invoice/static/src/js/**/*.js",
+            "pos_pay_invoice/static/src/css/**/*.css",
+        ],
+        'web.assets_qweb': [
+            "pos_pay_invoice/static/src/xml/**/*.xml",
+        ],
     },
-    'qweb': [
-        'static/src/xml/Screens/ProductScreen/InvoicesButton.xml',
-        'static/src/xml/Screens/InvoiceList/InvoiceListScreen.xml',
-        'static/src/xml/Screens/InvoiceList/InvoiceLine.xml',
-    ],
     'installable': True,
     'auto_install': False,
     "external_dependencies": {
