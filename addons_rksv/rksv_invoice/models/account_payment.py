@@ -89,9 +89,9 @@ class AccountPayment(models.Model):
 
     def action_post(self):
         if self.env.context.get('disable_rksv', False):
-            return super(AccountPayment, self).action_post()
+            return super().action_post()
         self.rksv_sign_payment()
-        return super(AccountPayment, self).action_post()
+        return super().action_post()
 
     def rksv_sign_payment(self):
         if self.env.context.get('disable_rksv', False):
@@ -102,3 +102,18 @@ class AccountPayment(models.Model):
                     raise UserError('Belegsignatur meldet einen Fehler.')
                 beleg = payment.journal_id.register_payment(payment)
                 payment.update(beleg)
+
+    def unlink(self):
+        if self.filtered(lambda p: p.receipt_id):
+            raise UserError('Eine RKSV Signierte Zahlung kann nicht gelöscht werden.')
+        super().unlink()
+
+    def action_draft(self):
+        if self.filtered(lambda p: p.receipt_id):
+            raise UserError('Eine RKSV Signierte Zahlung kann nicht wieder zurückgesetzt werden.')
+        super().action_draft()
+
+    def action_cancel(self):
+        if self.filtered(lambda p: p.receipt_id):
+            raise UserError('Eine RKSV Signierte Zahlung kann nicht abgebrochen werden.')
+        super().action_cancel()
