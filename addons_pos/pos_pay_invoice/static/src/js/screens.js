@@ -178,8 +178,8 @@ odoo.define('pos_pay_invoice.screens', function (require) {
             var product = this.pos.db.get_product_by_id(this.pos.config.invoice_product_id[0]);
             // Add product to order
             order.add_product(product, {
-                price: this.new_invoice.get('amount_total'),
-                lst_price: this.new_invoice.get('amount_total'),
+                price: this.new_invoice.get('amount_residual'),
+                lst_price: this.new_invoice.get('amount_residual'),
                 extras: {
                     invoice: this.new_invoice,
                     price_manually_set: true,

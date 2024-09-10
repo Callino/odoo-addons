@@ -35,7 +35,7 @@
             <td><t t-esc='moment(invoice.get("date_invoice")).format("L")' /></td>
             <td><t t-esc='invoice.get_partner_displayname()' /></td>
             <td><t t-esc='invoice.get("name")?invoice.get("name"):""' /></td>
-            <td><t t-esc='widget.format_currency_no_symbol(invoice.get("amount_total"), 2)' /></td>
+            <td><t t-esc='widget.format_currency_no_symbol(invoice.get("amount_residual"), 2)' /></td>
             <td><t t-esc='invoice.get("date_due")?moment(invoice.get("date_due")).format("L"):""' /></td>
         </tr>
     </t>

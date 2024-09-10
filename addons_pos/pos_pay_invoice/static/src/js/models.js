@@ -40,7 +40,7 @@ odoo.define('pos_pay_invoice.models', function (require) {
     // Load Odoo configured signature providers - check if this is still needed !
     models.load_models({
         model: 'account.move',
-        fields: ['name', 'ref', 'partner_id', 'invoice_date', 'amount_total', 'invoice_date_due', 'id', 'pos_order_id', 'invoice_payment_state'],
+        fields: ['name', 'ref', 'partner_id', 'invoice_date', 'amount_residual', 'invoice_date_due', 'id', 'pos_order_id', 'invoice_payment_state'],
         domain: function (self) {
             return [
                 ['state', '=', 'posted'],
